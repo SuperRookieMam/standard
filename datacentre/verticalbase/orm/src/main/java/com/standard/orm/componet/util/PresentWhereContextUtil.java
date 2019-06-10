@@ -254,7 +254,7 @@ public class PresentWhereContextUtil {
                 list.add(new Sort.Order(direction,jsonObject.getString("fieldName")));
             }
         }
-        return  new Sort(list);
+        return Sort.by(list);
     }
 
     public static <T> Page<T> readPage(WhereContext whereContext,Class<T> clazz, EntityManager entityManager) {
