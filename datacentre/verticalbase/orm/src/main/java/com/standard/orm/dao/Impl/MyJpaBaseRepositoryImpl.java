@@ -8,23 +8,16 @@ import com.standard.orm.componet.util.ParamsPredicateBuilder;
 import com.standard.orm.dao.MyJpaBaseRepository;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.jpa.QueryHints;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.support.CrudMethodMetadata;
-import org.springframework.data.jpa.repository.support.JpaEntityInformation;
-import org.springframework.data.jpa.repository.support.JpaEntityInformationSupport;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import org.springframework.data.jpa.repository.support.*;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import javax.persistence.criteria.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -87,6 +80,7 @@ public class MyJpaBaseRepositoryImpl<T,ID extends Serializable> extends SimpleJp
         toSort(whereContext.getSort(),query);
          // 如果需要分组，分组
         groupBy( query, root,whereContext.getGroupby());
+        // 反回使用二级缓存，我想应该会快一些吧,封装不聊使用二级缓存先屏蔽
         return applyRepositoryMethodMetadata(entityManager.createQuery(query));
     }
     protected <S extends T> TypedQuery<Long> getCountQuery(Class<S> domainClass,WhereContext whereContext) {
@@ -114,7 +108,6 @@ public class MyJpaBaseRepositoryImpl<T,ID extends Serializable> extends SimpleJp
         Assert.notNull(query, "CriteriaQuery must not be null!");
 
         Root<U> root = query.from(domainClass);
-
         if (spec == null) {
             return root;
         }
@@ -142,11 +135,10 @@ public class MyJpaBaseRepositoryImpl<T,ID extends Serializable> extends SimpleJp
         return toReturn;
     }
     private void applyQueryHints(Query query) {
-        for (Map.Entry<String, Object> hint : getQueryHints().withFetchGraphs(entityManager)) {
+      /*  for (Map.Entry<String, Object> hint : getQueryHints().withFetchGraphs(entityManager)) {
             query.setHint(hint.getKey(), hint.getValue());
-        }
+        }*/
     }
-
     private static long executeCountQuery(TypedQuery<Long> query) {
 
         Assert.notNull(query, "TypedQuery must not be null!");
