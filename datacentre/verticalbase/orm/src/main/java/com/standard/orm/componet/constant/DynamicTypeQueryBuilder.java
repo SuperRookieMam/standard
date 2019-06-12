@@ -27,6 +27,20 @@ public class DynamicTypeQueryBuilder<T,ID extends Serializable> {
         this.query =criteriaBuilder.createQuery(this.entityInformation.getJavaType());
         this.root = this.query.from(this.entityInformation.getJavaType());
     }
+    public CriteriaQuery query(){
+        return this.query;
+    }
+    public Predicate and(){
+       return null;
+    }
+    public Predicate or(){
+        return null;
+    }
+
+
+
+
+
 
 
 
@@ -39,5 +53,8 @@ public class DynamicTypeQueryBuilder<T,ID extends Serializable> {
 
             return null;
         }
+
+
+
     }
 }

@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class PathUtil {
 
-    public static Path<?> getPath(Root root,String key,JoinType joinType){
+    public static Path getPath(Root root,String key,JoinType joinType){
         Path path =null;
         Assert.notNull(key, "key must not null");
         if (key.contains(".")){
