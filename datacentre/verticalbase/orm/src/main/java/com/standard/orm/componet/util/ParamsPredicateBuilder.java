@@ -3,10 +3,7 @@ package com.standard.orm.componet.util;
 import com.standard.orm.componet.constant.Expression;
 import org.springframework.util.ObjectUtils;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,7 +34,7 @@ public class ParamsPredicateBuilder {
    private static Predicate getPredicatesByExpression(Root<?> root, CriteriaBuilder builder, Expression expression) {
       Predicate predicate = null;
         if (expression.getUnique()==1){
-            Path path =PathUtil.getPath(root,expression.getKey());
+            Path path =PathUtil.getPath(root,expression.getKey(), JoinType.LEFT);
             Object value =expression.getValue();
             switch (expression.getType()){
                 case "like":

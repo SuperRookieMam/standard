@@ -5,17 +5,19 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.*;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class PathUtil {
 
-    public static<T> Path<?> getPath(Root<T> root,String key){
+    public static Path<?> getPath(Root root,String key,JoinType joinType){
         Path path =null;
         Assert.notNull(key, "key must not null");
         if (key.contains(".")){
             String[] keys = StringUtils.split(key, ".");
-            Join join = joinAdd(root,JoinType.LEFT,keys);
-            path = join.get(keys[keys.length-1]);
+            if (joinIsExit(keys[keys.length-2],root.getJoins()))
+                path = joinAdd(root,joinType,keys,0).get(keys[keys.length-1]);
         }else {
             path = root.get(key);
         }
@@ -35,15 +37,24 @@ public class PathUtil {
         return false ;
     }
 
-    private static Join<?,?> joinAdd(Root root, JoinType joinType,String[] keys) {
-        Set<Join<?,?>> joinSet = root.getJoins();
-        Join join = null;
-        if (!joinIsExit(keys[keys.length -2],joinSet)){
-            join =root.join(keys[0],joinType);
-            for (int i = 1; i < keys.length-1; i++) {
-                join = join.join(keys[i],joinType);
-            }
+    /**
+     * 注意key 是传入的name.eglishname.en 截取最后一个的值 name.eglishname
+     * */
+    private  static From<?,?> joinAdd(From<?,?> from, JoinType joinType,String[] keys,int i){
+        if (i==keys.length-1){
+            return from;
         }
-        return join;
+        From<?,?> subFrom =null;
+        Class clazz = from.get(keys[i]).getJavaType();
+        if (List.class.isAssignableFrom(clazz)){
+            subFrom = from.joinList(keys[i],joinType);
+         }else if (Set.class.isAssignableFrom(clazz)){
+            subFrom = from.joinSet(keys[i],joinType);
+        }else if (Map.class.isAssignableFrom(clazz)){
+            subFrom = from.joinMap(keys[i],joinType);
+        }else {
+            subFrom =from.join(keys[i],joinType);
+        }
+        return joinAdd(subFrom,joinType,keys,i+1);
     }
 }
