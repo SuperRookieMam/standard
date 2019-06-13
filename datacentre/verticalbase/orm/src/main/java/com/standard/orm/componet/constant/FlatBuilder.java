@@ -4,6 +4,7 @@ import com.standard.orm.componet.util.PathUtil;
 import org.springframework.util.Assert;
 
 import javax.persistence.criteria.*;
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
@@ -13,10 +14,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-public class FlatBuilder<T> {
-   private final List<Predicate> list ;
-   private final Root<T> root;
-   private final CriteriaBuilder builder ;
+public class FlatBuilder<T> implements Serializable {
+    private static final long serialVersionUID = 8265136946332840908L;
+    private final List<Predicate> list ;
+    private final Root<T> root;
+    private final CriteriaBuilder builder ;
 
    public FlatBuilder(CriteriaBuilder builder,Root<T> root){
         this.builder =builder;
@@ -97,13 +99,14 @@ public class FlatBuilder<T> {
         return this;
     }
     public Predicate or(){
-        return builder.or(list.toArray(new Predicate[0]));
+        Predicate predicate =list.size()>1?builder.or(list.toArray(new Predicate[0])):list.get(0);
+        this.list.clear();
+        return predicate;
     }
     public Predicate and(){
-        return builder.and(list.toArray(new Predicate[0]));
-    }
-    public void clear() {
+        Predicate predicate =list.size()>1?builder.and(list.toArray(new Predicate[0])):list.get(0);
         this.list.clear();
+        return predicate;
     }
     /**
      *

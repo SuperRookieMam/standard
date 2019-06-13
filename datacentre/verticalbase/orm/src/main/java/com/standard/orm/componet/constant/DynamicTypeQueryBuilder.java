@@ -1,24 +1,20 @@
 package com.standard.orm.componet.constant;
 
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-public class DynamicTypeQueryBuilder<T,ID extends Serializable> {
-
+public class DynamicTypeQueryBuilder<T,ID extends Serializable> implements Serializable{
+    private static final long serialVersionUID = -5614365270480188365L;
     private final Root<T> root;
     private final CriteriaQuery<T> query;
     private final EntityManager entityManager;
     private final CriteriaBuilder criteriaBuilder;
     private final JpaEntityInformation<T, ID> entityInformation;
-    private final Map<String, CommonAbstractCriteria> queryMap=new HashMap<>();
-    private final Map<CriteriaQuery,List<Predicate>> PredicateMap =new HashMap<>();
 
     public DynamicTypeQueryBuilder(JpaEntityInformation<T, ID> entityInformation, EntityManager entityManager){
         this.entityInformation = entityInformation;
@@ -29,32 +25,5 @@ public class DynamicTypeQueryBuilder<T,ID extends Serializable> {
     }
     public CriteriaQuery query(){
         return this.query;
-    }
-    public Predicate and(){
-       return null;
-    }
-    public Predicate or(){
-        return null;
-    }
-
-
-
-
-
-
-
-
-    protected static class DynamicSpecification<T> implements Specification<T> {
-
-        private static final long serialVersionUID = 1506266334507285947L;
-
-        @Override
-        public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-
-            return null;
-        }
-
-
-
     }
 }
