@@ -16,8 +16,11 @@ public class PathUtil {
         Assert.notNull(key, "key must not null");
         if (key.contains(".")){
             String[] keys = StringUtils.split(key, ".");
-            if (joinIsExit(keys[keys.length-2],root.getJoins()))
+            Join<?,?> join =joinIsExit(keys[keys.length-2],root.getJoins());
+            if (join==null)
                 path = joinAdd(root,joinType,keys,0).get(keys[keys.length-1]);
+            else
+                path =join.get(keys[keys.length-1]);
         }else {
             path = root.get(key);
         }
@@ -26,17 +29,16 @@ public class PathUtil {
     }
 
     /*检查最后一张表是否最在联表*/
-    private static boolean joinIsExit(String lasstSecond,Set<Join<?,?>> joinSet) {
+    private static Join<?,?> joinIsExit(String lasstSecond,Set<Join<?,?>> joinSet) {
         Iterator<Join<?,?>> iterator =joinSet.iterator();
-        Join join = null;
         while (iterator.hasNext()) {
-            if (lasstSecond.equals(iterator.next().getAttribute().getName())){
-                return true ;
+            Join<?,?> join =iterator.next();
+            if (lasstSecond.equals(join.getAttribute().getName())){
+                return join;
             }
         }
-        return false ;
+        return null ;
     }
-
     /**
      * 注意key 是传入的name.eglishname.en 截取最后一个的值 name.eglishname
      * */

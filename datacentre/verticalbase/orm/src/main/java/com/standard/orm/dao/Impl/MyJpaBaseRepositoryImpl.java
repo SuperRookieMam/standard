@@ -1,5 +1,7 @@
 package com.standard.orm.dao.Impl;
 
+import com.standard.orm.componet.feature.*;
+import com.standard.orm.componet.feature.lambadInterface.DynamicTypeAssembly;
 import com.standard.orm.dao.MyJpaBaseRepository;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +11,7 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 
 import javax.persistence.EntityManager;
 import java.io.Serializable;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -22,5 +25,28 @@ public class MyJpaBaseRepositoryImpl<T,ID extends Serializable> extends SimpleJp
         this.entityManager =entityManager;
         this.entityInformation = JpaEntityInformationSupport.getEntityInformation(domainClass, entityManager);
     }
-
+    @Override
+    public DynamicDelete<T>  getDynamicDelete(){
+        return new DynamicDelete<>(entityInformation.getJavaType(),entityManager);
+    }
+    @Override
+    public DynamicTypeSelect<T>  getDynamicTypeSelect(){
+        return new DynamicTypeSelect<>(entityInformation.getJavaType(),entityManager);
+    }
+    @Override
+    public DynamicTupleSelect<T> getDynamicTupleSelect(){
+        return new DynamicTupleSelect<>(entityInformation.getJavaType(),entityManager);
+    }
+    @Override
+    public DynamicUpdate<T> getDynamicUpdate(){
+        return new DynamicUpdate<>(entityInformation.getJavaType(),entityManager);
+    }
+    @Override
+    public DynamicPageTypeSelect<T> readPageType(int pageNum, int pageSize){
+         return new DynamicPageTypeSelect<>(entityInformation.getJavaType(),entityManager,pageNum,pageSize);
+    }
+    @Override
+    public DynamicPageTupleSelect<T> readPageMap(int pageNum,int pageSize){
+        return new DynamicPageTupleSelect<>(entityInformation.getJavaType(),entityManager,pageNum,pageSize);
+    }
 }
