@@ -36,7 +36,7 @@ public class DynamicPageTupleSelect<T> implements Serializable{
         this.query =builder.createTupleQuery();
         this.countQuery =builder.createTupleQuery();
         this.root =query.from(tClass);
-        this.countRoot =query.from(tClass);
+        this.countRoot =this.countQuery.from(tClass);
         this.assembly =new DynamicPredicateBuilder<>(builder,root);
         this.flat =new FlatBuilder<>(builder,root);
         this.pageNum =pageNum;

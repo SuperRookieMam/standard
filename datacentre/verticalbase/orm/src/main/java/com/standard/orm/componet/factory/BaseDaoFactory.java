@@ -53,7 +53,7 @@ public class BaseDaoFactory  extends JpaRepositoryFactory {
                 if (aClass.getName().equals(MyJpaBaseRepositoryImpl.class.getName())){
                     myJpaBaseRepository =new MyJpaBaseRepositoryImpl(information.getDomainType(),entityManager);
                 }else {
-                    constructor = aClass.getConstructor(information.getDomainType(),entityManager.getClass());
+                    constructor = aClass.getConstructor(Class.class,EntityManager.class);
                     myJpaBaseRepository =(MyJpaBaseRepositoryImpl)constructor.newInstance(information.getDomainType(),entityManager);
                 }
             } catch (Exception e) {
@@ -70,7 +70,12 @@ public class BaseDaoFactory  extends JpaRepositoryFactory {
     @Override
     protected Class<?> getRepositoryBaseClass(RepositoryMetadata metadata) {
         if (MyJpaBaseRepository.class.isAssignableFrom(metadata.getRepositoryInterface())){
-            return MyJpaBaseRepository.class;
+            Class aClass =getRepositoryImpl(metadata.getRepositoryInterface());
+            if (aClass.getName().equals(MyJpaBaseRepositoryImpl.class.getName())){
+                return MyJpaBaseRepositoryImpl.class;
+            }else {
+                return aClass;
+            }
         }
         return SimpleJpaRepository.class;
     }
@@ -79,7 +84,7 @@ public class BaseDaoFactory  extends JpaRepositoryFactory {
      * */
     public Class getRepositoryImpl(Class<?> clazz){
         List<Class> classList=intterFaceMap.get(clazz.getName());
-        Assert.isTrue(classList.size()<1,"发现两处Dao实现，请使用一个实现");
+        Assert.isTrue(classList.size()<=1,"发现两处Dao实现，请使用一个实现");
         return classList.size()==0?MyJpaBaseRepositoryImpl.class:classList.get(0);
     }
     private static void initInterFaceImpl() throws ClassNotFoundException {

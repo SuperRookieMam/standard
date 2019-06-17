@@ -29,7 +29,8 @@ public class DynamicPageTypeSelect<T> implements Serializable {
         this.query =builder.createQuery(tClass);
         this.countQuery =builder.createQuery(Long.class);
         this.root =query.from(tClass);
-        this.countRoot =query.from(tClass);
+        this.countRoot =this.countQuery.from(tClass);
+        this.countQuery.select(builder.count(this.countRoot));
         this.assembly =new DynamicPredicateBuilder<>(builder,root);
         this.flat =new FlatBuilder<>(builder,root);
         this.pageNum =pageNum;
