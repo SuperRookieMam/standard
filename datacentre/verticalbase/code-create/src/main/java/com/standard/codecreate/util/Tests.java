@@ -1,11 +1,15 @@
 package com.standard.codecreate.util;
 
+import org.apache.maven.shared.invoker.*;
+
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Tests {
     public static void main(String[] args) throws Exception {
-        List<String> list =new ArrayList<>();
+       /* List<String> list =new ArrayList<>();
         list.add("*.java");
         list.add("*.iml");
         list.add("/target/");
@@ -15,6 +19,20 @@ public class Tests {
                                       "E:\\standard\\datacentre\\verticalbase\\code-create",
                                     "src",
                                     "C:\\Users\\Administrator\\Desktop\\target",
-                                  null);
+                                  null);*/
+
+       /* InvocationRequest request = new DefaultInvocationRequest();
+        request.setPomFile(new File("D:\\code\\source\\ideaSource\\standard\\datacentre\\testProject\\pom.xml"));
+        request.setGoals(Collections.singletonList("dependency:tree"));
+        request.setJavaHome(new File(""));
+        Invoker invoker = new DefaultInvoker();
+        try {
+             request.getGoals().forEach(ele -> System.out.println(ele));
+            InvocationResult invocationResult = invoker.execute(request);
+
+        } catch (MavenInvocationException e) {
+            e.printStackTrace();
+        }*/
+
     }
 }
