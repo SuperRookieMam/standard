@@ -1,6 +1,5 @@
 package com.standard.base.service;
 
-import com.standard.base.componet.dto.ResultDto;
 import com.standard.base.componet.params.DynamicParam;
 import com.standard.base.entity.BaseEntity;
 import com.standard.orm.componet.feature.PageInfo;
@@ -16,11 +15,11 @@ public interface BaseService<T extends BaseEntity,ID extends Serializable> {
 
     List<T> findListByParams(DynamicParam dynamicParam);
 
-    PageInfo<T> findpageByParams(DynamicParam dynamicParam);
+    PageInfo<T> findPageByParams(DynamicParam dynamicParam);
 
     T updateByEntity(T entity);
 
-    List<T> updateByEntirys(Iterable<T> iterable);
+    List<T> updateByEntitys(Iterable<T> iterable);
 
     int updateByParams(DynamicParam dynamicParam);
 
@@ -29,4 +28,8 @@ public interface BaseService<T extends BaseEntity,ID extends Serializable> {
     void deletByEntitys(Iterable<T> entitys);
 
     int deletByParam(DynamicParam dynamicParam);
+
+    T insertByEntity(T entity);
+
+    List<T> insertByEntitys(Iterable<T> entitys);
 }

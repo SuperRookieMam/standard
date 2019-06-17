@@ -2,7 +2,6 @@ package com.standard.base.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.standard.base.componet.dto.ResultDto;
 import com.standard.base.componet.params.DynamicParam;
 import com.standard.base.componet.util.ParamUtil;
 import com.standard.base.dao.BaseRepository;
@@ -48,7 +47,7 @@ public class BaseServiceImpl<T extends BaseEntity,ID extends Serializable> imple
         return  dynamicTypeSelect.getResult();
     }
     @Override
-    public PageInfo<T> findpageByParams(DynamicParam dynamicParam){
+    public PageInfo<T> findPageByParams(DynamicParam dynamicParam){
         Assert.isTrue(!ObjectUtils.isEmpty(dynamicParam.getPageNum())&&!ObjectUtils.isEmpty(dynamicParam.getPageSize()),"分页信息不能为空");
         DynamicPageTypeSelect<T> DynamicPageTypeSelect = baseRepository.readPageType(dynamicParam.getPageNum(),dynamicParam.getPageSize());
         DynamicPageTypeSelect.dynamicBuild(ele ->{
@@ -56,6 +55,7 @@ public class BaseServiceImpl<T extends BaseEntity,ID extends Serializable> imple
             Predicate predicateCount = ParamUtil.analysisDynamicParam(dynamicParam,ele.builder,ele.countRoot);
             if (!ObjectUtils.isEmpty(predicate))
                 ele.query.where(predicate);
+            if (!ObjectUtils.isEmpty(predicateCount))
                 ele.countQuery.where(predicateCount);
             JSONArray jsonArray = dynamicParam.getSort();
             ParamUtil.orderby(ele.builder,ele.query,ele.root,jsonArray.toArray(new String[0]));
@@ -70,7 +70,7 @@ public class BaseServiceImpl<T extends BaseEntity,ID extends Serializable> imple
        return baseRepository.save(entity);
     }
     @Override
-    public List<T> updateByEntirys(Iterable<T> iterable){
+    public List<T> updateByEntitys(Iterable<T> iterable){
        return baseRepository.saveAll(iterable);
     }
     @Override
@@ -113,5 +113,13 @@ public class BaseServiceImpl<T extends BaseEntity,ID extends Serializable> imple
         });
         return dynamicDelete.getResult();
     }
+    @Override
+    public T insertByEntity(T entity){
+        return baseRepository.save(entity);
+    }
 
+    @Override
+    public List<T> insertByEntitys(Iterable<T> entitys){
+        return baseRepository.saveAll(entitys);
+    }
 }

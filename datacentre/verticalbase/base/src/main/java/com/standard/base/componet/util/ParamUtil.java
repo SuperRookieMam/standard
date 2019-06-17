@@ -1,6 +1,6 @@
 package com.standard.base.componet.util;
 
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.standard.base.componet.params.BasicsParam;
 import com.standard.base.componet.params.DynamicParam;
@@ -12,7 +12,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.*;
 import javax.validation.constraints.NotNull;
@@ -20,7 +19,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public class ParamUtil implements Serializable {
     private static final long serialVersionUID = 2507212910575627408L;
@@ -52,7 +50,7 @@ public class ParamUtil implements Serializable {
      * 解析
      * */
     private static Predicate  analysisMixtureParams(List<MixtureParam> list, CriteriaBuilder builder, Root<?> root,String type){
-        if (ObjectUtils.isEmpty(list)){
+        if (!ObjectUtils.isEmpty(list)){
             List<Predicate> predicates =new ArrayList<>();
             for (MixtureParam ele : list){
                 Predicate predicate = analysisMixtureParam(ele,builder,root);
@@ -252,25 +250,10 @@ public class ParamUtil implements Serializable {
         }
     }
 
-    public static  DynamicParam mapToDynamicParam (Map<String,String> map){
-        DynamicParam dynamicParam = new DynamicParam();
-        dynamicParam.setParams(map.get("params"));
-        if (!StringUtils.isEmpty(map.get("pageNum")))
-            dynamicParam.setPageNum(Integer.valueOf(map.get("pageNum")));
-        if (!StringUtils.isEmpty(map.get("pageSize")))
-            dynamicParam.setPageNum(Integer.valueOf(map.get("pageSize")));
-       if (!StringUtils.isEmpty(map.get("sort")))
-            dynamicParam.setSort(JSONArray.parseArray(map.get("sort")));
-        if (!StringUtils.isEmpty(map.get("groupby")))
-            dynamicParam.setGroupby(JSONArray.parseArray(map.get("groupby")));
-        if (!StringUtils.isEmpty(map.get("mixtureParams")))
-            dynamicParam.setMixtureParams(JSONArray.parseArray(map.get("mixtureParams"),MixtureParam.class));
-        if (!StringUtils.isEmpty(map.get("flatParams")))
-            dynamicParam.setFlatParams(JSONArray.parseArray(map.get("flatParams"),FlatParam.class));
-        if (!StringUtils.isEmpty(map.get("basicsParams")))
-            dynamicParam.setBasicsParams(JSONArray.parseArray(map.get("basicsParams"),BasicsParam.class));
-        if (!StringUtils.isEmpty(map.get("updateFiled")))
-            dynamicParam.setUpdateFiled(JSONObject.parseObject(map.get("updateFiled")));
+    public static  DynamicParam strToDynamicParam (String jsonStr){
+        System.out.println(jsonStr);
+        JSONObject jsonObject =JSON.parseObject(jsonStr);
+        DynamicParam dynamicParam =jsonObject.toJavaObject(DynamicParam.class);
         return dynamicParam;
     }
 
