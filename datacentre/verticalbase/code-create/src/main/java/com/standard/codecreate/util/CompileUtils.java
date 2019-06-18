@@ -1,10 +1,13 @@
 package com.standard.codecreate.util;
 
+import org.apache.maven.shared.invoker.*;
+
 import javax.tools.*;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /****
@@ -14,20 +17,7 @@ public class CompileUtils {
 	private String jars = "";
 	private String targetDir = "";
 
-	/**
-	 * 判断字符串是否为空 有值为true 空为：false
-	 */
-	public boolean isnull(String str) {
-		if (null == str) {
-			return false;
-		} else if ("".equals(str)) {
-			return false;
-		} else if (str.equals("null")) {
-			return false;
-		} else {
-			return true;
-		}
-	}
+
 
 	/**
 	 * 编译java文件
@@ -41,7 +31,7 @@ public class CompileUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean compiler(String encoding, String jars, String filePath, String sourceDir, String targetDir, DiagnosticCollector<JavaFileObject> diagnostics)
+	public boolean javacCompiler(String encoding, String jars, String filePath, String sourceDir, String targetDir, DiagnosticCollector<JavaFileObject> diagnostics)
 			throws Exception {
 		// 获取编译器实例
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -77,6 +67,26 @@ public class CompileUtils {
 		}
 	}
 
+
+	/**
+	 * @param pomPath 要编译的pom文件路径
+	 * @param command maven 命令
+	 * @param  mavenHome  maven的安装目录
+	 * */
+	public int  mavenCompile(String pomPath, String command,String mavenHome){
+		InvocationRequest request = new DefaultInvocationRequest();
+		request.setPomFile(new File(pomPath));
+		request.setGoals(Collections.singletonList(command));
+		Invoker invoker = new DefaultInvoker();
+		invoker.setMavenHome(new File(mavenHome));
+		try {
+			InvocationResult invocationResult = invoker.execute(request);
+			return invocationResult.getExitCode();
+		} catch (MavenInvocationException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
 	/**
 	 * 查找该目录下的所有的java文件
 	 *
@@ -141,6 +151,19 @@ public class CompileUtils {
 		}
 		return jars;
 	}
-
+	/**
+	 * 判断字符串是否为空 有值为true 空为：false
+	 */
+	private boolean isnull(String str) {
+		if (null == str) {
+			return false;
+		} else if ("".equals(str)) {
+			return false;
+		} else if (str.equals("null")) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 
 }

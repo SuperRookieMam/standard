@@ -1,7 +1,8 @@
-package ~[service];
+package ~[packageService];
 
-import com.yhl.base.service.BaseService;
+import com.standard.base.service.BaseService;
 import ~[entityname];
 
-public interface ~[entitySimpleName]Service extends BaseService<~[entitySimpleName], ~[idtype]> {
+public interface ~[entitySimpleName]Service extends BaseService<~[entitySimpleName], ~[ID]> {
+
 }

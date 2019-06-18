@@ -1,9 +1,9 @@
-package ~[dao];
+package ~[packagedao];
 
-import com.yhl.base.dao.BaseDao;
+import com.standard.base.dao.BaseRepository;
 import ~[entityname];
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ~[entitySimpleName]Dao extends BaseDao<~[entitySimpleName],~[idtype]> {
+public interface ~[entitySimpleName]Repository extends BaseRepository<~[entitySimpleName],~[ID]> {
 }
