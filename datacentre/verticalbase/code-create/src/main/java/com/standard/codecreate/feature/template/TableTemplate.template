@@ -86,7 +86,7 @@
     controllerMapping = ''
 
     handleSizeChange (val) {
-     this.params.pageSize = val
+     this.params.  = val
       this.filterByserchObj()
     }
     handleCurrentChange (val) {

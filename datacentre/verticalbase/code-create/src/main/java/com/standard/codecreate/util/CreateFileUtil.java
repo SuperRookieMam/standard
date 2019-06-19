@@ -5,6 +5,7 @@ import com.standard.codecreate.feature.annotation.IsCreate;
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,8 +16,28 @@ public class CreateFileUtil {
         System.out.println(file.getName());
     }
 
+    public static void createJavaFile(String packageName,String templatePath) throws Exception {
+       File file = getFileByPackage(packageName);
+       List<Class> list =new ArrayList<>();
+       getAllClass(file,list);
+       Map<String ,List<String>> map =new HashMap<>();
+       getTemplateFils(templatePath,map);
+       List<String> list1 =map.get("DaoTemplate");
 
 
+    }
+
+
+
+    private static File getFileByPackage(String packageName){
+        String classes =  CreateFileUtil.class.getClassLoader().getResource("").getPath();
+        classes +=packageName.replaceAll("\\.", "/");
+        File file =new File(classes);
+        if (!file.exists()){
+            throw  new RuntimeException("包名不存在");
+        }
+        return file;
+    }
 
     private   static void getAllClass(File file,List<Class> list) throws ClassNotFoundException {
          if (file.isFile()&&file.getName().endsWith(".class")){
@@ -37,15 +58,7 @@ public class CreateFileUtil {
          }
     }
 
-    private static File getFileByPackage(String packageName){
-        String classes =  CreateFileUtil.class.getClassLoader().getResource("").getPath();
-        classes +=packageName.replaceAll("\\.", "/");
-        File file =new File(classes);
-        if (!file.exists()){
-            throw  new RuntimeException("包名不存在");
-        }
-        return file;
-    }
+
 
     private static void getTemplateFils(String path, Map<String,List<String>> map) throws Exception {
         File file =new File(path);

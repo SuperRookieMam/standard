@@ -55,4 +55,10 @@ public class InitParmas {
             },list);
        return list1;
     }
+
+
+
+
+
+
 }
