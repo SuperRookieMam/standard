@@ -60,6 +60,10 @@ public class InitParmas {
 
 
     public List<String> vueReplace(List<String> list,Class clazz,String vueType){
+        List<String> cloneList =new ArrayList<>();
+        for (String line:list){
+            cloneList.add(line+"");
+        }
         List<String> list1 =new ArrayList<>();
         Map<String,Integer> map =new HashMap<>();
         map.put("lineNum",-1);
@@ -70,19 +74,22 @@ public class InitParmas {
             String newLine =ele+"";
             map.put("lineNum",map.get("lineNum")+1);
             if (newLine.contains("<for>")){
+                String forStr ="";
                 for (int i=map.get("lineNum");i<list.size();i++){
-                    String forStr =list.get(i)+"";
-                    if (forStr.contains("</for>")){
-                        list.set(i,"<abandon>");
+                    if (cloneList.get(i).contains("</for>")){
+                        cloneList.set(i,"<abandon>");
                         break;
                     }
-                    mapStr.put("forStr",mapStr.get("forStr")+forStr);
-                    list.set(i,"<abandon>");
+                    if (map.get("lineNum")!=i){
+                        forStr +=cloneList.get(i);
+                    }
+                    cloneList.set(i,"<abandon>");
                 }
-                String forStr ="";
+                mapStr.put("forStr",forStr);
+                String forStrs ="";
                 for (Field field:fieldList){
                     Description description =field.getAnnotation(Description.class);
-                    String fortemp =mapStr.get("forStr");
+                    String fortemp = mapStr.get("forStr");
                     if (fortemp.contains("<lable>")){
                         String lable =getDescriptionMsg(description,"lable",field);
                         fortemp =fortemp.replaceAll("<lable>",lable);
@@ -91,10 +98,11 @@ public class InitParmas {
                         String property =getDescriptionMsg(description,"prop",field);
                         fortemp =fortemp.replaceAll("<property>",property);
                     }
-                    forStr +=fortemp;
+                    forStrs += fortemp;
                 }
-                newLine =forStr;
+                list1.add(forStrs);
                 mapStr.put("forStr","");
+                map.put("lineNum",-1);
             }else {
                 if (!newLine.contains("<abandon>")){
                     if (newLine.contains("<lable>")){
@@ -109,13 +117,10 @@ public class InitParmas {
                         String tabLable =clazz.getSimpleName();
                         newLine =newLine.replaceAll("<name>",tabLable);
                     }
+                    list1.add(newLine);
                 }
             }
-            list1.add(newLine);
-            /*if (!newLine.contains("<abandon>")){
-                list1.add(newLine);
-            }*/
-        },list);
+        },cloneList);
         return list1;
     }
 

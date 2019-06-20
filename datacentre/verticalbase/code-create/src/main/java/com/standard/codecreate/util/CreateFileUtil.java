@@ -14,8 +14,8 @@ public class CreateFileUtil {
 
     public static void main(String[] args) throws Exception {
        createAllFile("com.standard.codecreate.feature.entity",
-                     "E:\\standard\\datacentre\\verticalbase\\code-create\\src\\main\\java\\com\\standard\\codecreate\\feature\\template",
-                      "C:\\Users\\Administrator\\Desktop");
+                     "D:\\code\\source\\ideaSource\\standard\\datacentre\\verticalbase\\code-create\\src\\main\\java\\com\\standard\\codecreate\\feature\\template",
+                      "C:\\Users\\绝世好男人\\Desktop");
 
     }
 
@@ -65,6 +65,7 @@ public class CreateFileUtil {
                 String vueType=name.contains("Table")?"table":"form";
                 String fileName=name.contains("Table")?(clazz.getSimpleName()+"s"):clazz.getSimpleName();
                 list1 =new InitParmas().vueReplace(map.get(name),clazz,vueType);
+
                 createFile(list1,
                         sourcePath,
                         name.substring(0,name.indexOf("Template")),
@@ -154,13 +155,9 @@ public class CreateFileUtil {
         String newfile =filetype+File.separator+fileName+"."+endWith;
         File newFile = new File(newfile);
         FileOutputStream fileOutputStream =new FileOutputStream(newFile);
-        OutputStreamWriter outputStreamWriter =new OutputStreamWriter(fileOutputStream);
-        BufferedWriter bufferedWriter =new BufferedWriter(outputStreamWriter);
         for (String line:list){
-            bufferedWriter.write(line);
+          fileOutputStream.write(line.getBytes());
         }
-        bufferedWriter.close();
-        outputStreamWriter.close();
         fileOutputStream.close();
         return newFile;
     }
