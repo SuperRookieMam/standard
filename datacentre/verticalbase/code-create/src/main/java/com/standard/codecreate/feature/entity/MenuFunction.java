@@ -1,6 +1,7 @@
 package com.standard.codecreate.feature.entity;
 
 import com.standard.codecreate.feature.annotation.Description;
+import com.standard.codecreate.feature.annotation.IsCreate;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,8 +10,10 @@ import javax.persistence.*;
 
 @Getter
 @Setter
+@IsCreate
 @Entity
 public class MenuFunction  {
+@Description
     private static final long serialVersionUID = -53761947833746331L;
 
     @Id
@@ -43,16 +46,18 @@ public class MenuFunction  {
 
     @Column(name = "pid_")
     @Description(label = "父ID",search = true,isColumn = true,searchType = "text")
-     private Integer pid;
+    private Integer pid;
 
     @Column(name = "is_menu_")
     @Description(label = "中文名称",search = true,isColumn = true,searchType = "text")
     private Integer isMenu;
 
     @Column(name = "is_show")
+@Description
     private Integer isShow;
 
     @Column(name = "is_flow")
+@Description
     private Integer isFlow;
 
     @Column(name = "company_id")

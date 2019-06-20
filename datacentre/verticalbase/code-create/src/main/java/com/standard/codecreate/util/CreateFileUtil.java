@@ -1,6 +1,7 @@
 package com.standard.codecreate.util;
 
 import com.standard.codecreate.feature.annotation.IsCreate;
+import com.standard.codecreate.feature.replace.InitParmas;
 
 import java.io.*;
 import java.lang.annotation.Annotation;
@@ -11,24 +12,67 @@ import java.util.Map;
 
 public class CreateFileUtil {
 
-    public static void main(String[] args) {
-      File file =  new File("E:\\standard\\datacentre\\verticalbase\\code-create\\src\\main\\java\\com\\standard\\codecreate\\feature\\template\\ControllerTemplate.template");
-        System.out.println(file.getName());
+    public static void main(String[] args) throws Exception {
+       createAllFile("com.standard.codecreate.feature.entity",
+                     "E:\\standard\\datacentre\\verticalbase\\code-create\\src\\main\\java\\com\\standard\\codecreate\\feature\\template",
+                      "C:\\Users\\Administrator\\Desktop");
+
     }
 
-    public static void createJavaFile(String packageName,String templatePath) throws Exception {
+    public static void createAllFile(String packageName,String templatePath,String sourcePath) throws Exception {
+        // 获取指定包名下面所有加了注解需要生成文件的实体类
        File file = getFileByPackage(packageName);
        List<Class> list =new ArrayList<>();
        getAllClass(file,list);
+        // 获取指定文件下面的模板文件
        Map<String ,List<String>> map =new HashMap<>();
        getTemplateFils(templatePath,map);
-       List<String> list1 =map.get("DaoTemplate");
+       createJavaFile(map,
+                      list,
+                      sourcePath,
+                      "DaoTemplate",
+                      "ServiceTemplate",
+                      "ServiceImplTemplate",
+                        "ControllerTemplate");
+        createVueFile(map,
+                list,
+                sourcePath,
+                "FormTemplate",
+                "TableTemplate");
 
 
     }
 
 
+    private static void createJavaFile(Map<String ,List<String>> map,List<Class> list,String sourcePath,String...templateNames) throws Exception {
+        for (Class clazz:list){
+            List<String> list1 =null;
+            for (String name:templateNames){
+                list1 =new InitParmas().javaReplace(map.get(name),clazz);
+                createFile(list1,
+                           sourcePath,
+                           name.substring(0,name.indexOf("Template")),
+                           clazz.getSimpleName(),
+                           "java");
+            }
+        }
+    }
 
+    private static void  createVueFile(Map<String ,List<String>> map,List<Class> list,String sourcePath,String...templateNames) throws Exception {
+        for (Class clazz:list){
+            List<String> list1 =null;
+            for (String name:templateNames){
+                String vueType=name.contains("Table")?"table":"form";
+                String fileName=name.contains("Table")?(clazz.getSimpleName()+"s"):clazz.getSimpleName();
+                list1 =new InitParmas().vueReplace(map.get(name),clazz,vueType);
+                createFile(list1,
+                        sourcePath,
+                        name.substring(0,name.indexOf("Template")),
+                        fileName,
+                        "vue");
+            }
+        }
+    }
     private static File getFileByPackage(String packageName){
         String classes =  CreateFileUtil.class.getClassLoader().getResource("").getPath();
         classes +=packageName.replaceAll("\\.", "/");
@@ -45,6 +89,7 @@ public class CreateFileUtil {
             classpackge =classpackge.substring(classpackge.indexOf("classes\\")+8);
             String re = File.separator.equals("\\")?"\\\\":"/";
              classpackge = classpackge.replaceAll(re,"\\.");
+             classpackge = classpackge.substring(0,classpackge.lastIndexOf(".class"));
              Class clazz =Class.forName(classpackge);
              Annotation annotation =clazz.getAnnotation(IsCreate.class);
              if (annotation!=null&&((IsCreate)annotation).on()){
@@ -88,7 +133,37 @@ public class CreateFileUtil {
         bufferedReader.close();
         return list;
     }
-
+    /**
+     * 文件未知必须存在 path 创建在哪里
+     * */
+    private static File createFile(List<String> list ,String path,String fileType,String fileName,String endWith) throws Exception {
+       File file = new File(path);
+       if (!file.exists()||!file.isDirectory()){
+           throw new  RuntimeException("路径不时一个路径或者目录不存在");
+       }
+       String javafile=path+File.separator+ "javaFile";
+       File javaFile = new File(javafile);
+       if (!javaFile.exists()){
+           javaFile.mkdir();
+       }
+       String filetype =javafile+File.separator+fileType;
+       File filetypeDir = new File(filetype);
+        if (!filetypeDir.exists()){
+            filetypeDir.mkdir();
+        }
+        String newfile =filetype+File.separator+fileName+"."+endWith;
+        File newFile = new File(newfile);
+        FileOutputStream fileOutputStream =new FileOutputStream(newFile);
+        OutputStreamWriter outputStreamWriter =new OutputStreamWriter(fileOutputStream);
+        BufferedWriter bufferedWriter =new BufferedWriter(outputStreamWriter);
+        for (String line:list){
+            bufferedWriter.write(line);
+        }
+        bufferedWriter.close();
+        outputStreamWriter.close();
+        fileOutputStream.close();
+        return newFile;
+    }
 
 
 }

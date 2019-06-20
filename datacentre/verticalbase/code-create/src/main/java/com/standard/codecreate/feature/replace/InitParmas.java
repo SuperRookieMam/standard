@@ -1,64 +1,167 @@
 package com.standard.codecreate.feature.replace;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.standard.codecreate.feature.annotation.Description;
+import com.standard.codecreate.util.MyClassUtil;
+
+import java.lang.reflect.Field;
+import java.util.*;
 
 
 public class InitParmas {
 
-    public List<String> HowReplace(List<String> list,Class clazz) {
+    public List<String> javaReplace(List<String> list,Class clazz) {
         List<String> list1 =new ArrayList<>();
         ReplacePlace.HowReplace(ele->{
-            String returnStr =null;
-            switch (ele){
-                case "~[packagedao]":
-                   String packgename = clazz.getPackage().getName();
-                   packgename =packgename.substring(0,packgename.indexOf("."))+".dao";
-                   returnStr ="~[packagedao],"+packgename;
-                   return  returnStr;
-                case "~[entityname]":
-                   returnStr ="~[entityname],"+clazz.getName();
-                    return  returnStr;
-                case "~[entitySimpleName]":
-                    returnStr ="~[entitySimpleName],"+clazz.getSimpleName();
-                    return  returnStr;
-                case "~[ID]":
-                    returnStr ="~[ID],"+"Long";
-                    return  returnStr;
-                case "~[packageService]":
-                    String packgeservice = clazz.getPackage().getName();
-                    packgeservice =packgeservice.substring(0,packgeservice.indexOf("."))+".service";
-                    returnStr ="~[packageService],"+packgeservice;
-                    return  returnStr;
-                case "~[packageServiceImpl]":
-                    String packgeserviceImpl = clazz.getPackage().getName();
-                    packgeserviceImpl =packgeserviceImpl.substring(0,packgeserviceImpl.indexOf("."))+".service.impl";
-                    returnStr ="~[packageServiceImpl],"+packgeserviceImpl;
-                    return  returnStr;
-                case "~[parantService]":
-                    String parantService = clazz.getPackage().getName();
-                    parantService =parantService.substring(0,parantService.indexOf("."))+".service."+clazz.getSimpleName()+"Service";
-                    returnStr ="~[parantService],"+parantService;
-                    return  returnStr;
-                case "~[packagecontroller]":
-                    String packagecontroller = clazz.getPackage().getName();
-                    packagecontroller =packagecontroller.substring(0,packagecontroller.indexOf("."))+".controller";
-                    returnStr ="~[packagecontroller],"+packagecontroller;
-                    return  returnStr;
-                case "~[entitySimpleNameFirstLower]":
-                    String entitySimpleNameFirstLower = clazz.getSimpleName();
-                    entitySimpleNameFirstLower =entitySimpleNameFirstLower.substring(0,1).toLowerCase()+entitySimpleNameFirstLower.substring(1);
-                    returnStr ="~[entitySimpleNameFirstLower],"+entitySimpleNameFirstLower;
-                    return  returnStr;
-                 }
-            return returnStr;
+            String newLine =ele;
+           if (newLine.contains("~[packagedao]")) {
+               String packgename = clazz.getPackage().getName();
+               packgename = packgename.substring(0, packgename.lastIndexOf(".")) + ".dao";
+               newLine =newLine.replaceAll("~\\[packagedao\\]", packgename);
+           }
+            if (ele.contains("~[entityname]")) {
+                newLine =newLine.replaceAll("~\\[entityname\\]",clazz.getName());
+            }
+            if (ele.contains("~[entitySimpleName]")) {
+                newLine =newLine.replaceAll("~\\[entitySimpleName\\]",clazz.getSimpleName());
+            }
+            if (ele.contains("~[entitySimpleName]")) {
+                newLine =newLine.replaceAll("~\\[ID\\]", "Long");
+            }
+            if (ele.contains("~[packageService]")) {
+                String packgeservice = clazz.getPackage().getName();
+                packgeservice =packgeservice.substring(0,packgeservice.lastIndexOf("."))+".service";
+                newLine =newLine.replaceAll("~\\[packageService\\]",packgeservice);
+
+            }
+            if (ele.contains("~[packageServiceImpl]")) {
+                String packgeserviceImpl = clazz.getPackage().getName();
+                packgeserviceImpl =packgeserviceImpl.substring(0,packgeserviceImpl.lastIndexOf("."))+".service.impl";
+                newLine =newLine.replaceAll("~\\[packageServiceImpl\\]",packgeserviceImpl);
+            }
+            if (ele.contains("~[parantService]")) {
+                String parantService = clazz.getPackage().getName();
+                parantService =parantService.substring(0,parantService.lastIndexOf("."))+".service."+clazz.getSimpleName()+"Service";
+                newLine =newLine.replaceAll("~\\[parantService\\]",parantService);
+            }
+            if (ele.contains("~[packagecontroller]")) {
+                String packagecontroller = clazz.getPackage().getName();
+                packagecontroller =packagecontroller.substring(0,packagecontroller.lastIndexOf("."))+".controller";
+                newLine =newLine.replaceAll("~\\[packagecontroller\\]",packagecontroller);
+            }
+            if (ele.contains("~[entitySimpleNameFirstLower]")) {
+                String entitySimpleNameFirstLower = clazz.getSimpleName();
+                entitySimpleNameFirstLower =entitySimpleNameFirstLower.substring(0,1).toLowerCase()+entitySimpleNameFirstLower.substring(1);
+                newLine =newLine.replaceAll("~\\[entitySimpleNameFirstLower\\]",entitySimpleNameFirstLower);
+             }
+            list1.add(newLine);
             },list);
        return list1;
     }
 
 
+    public List<String> vueReplace(List<String> list,Class clazz,String vueType){
+        List<String> list1 =new ArrayList<>();
+        Map<String,Integer> map =new HashMap<>();
+        map.put("lineNum",-1);
+        Map<String,String> mapStr =new HashMap<>();
+        mapStr.put("forStr","");
+        List<Field> fieldList = MyClassUtil.getAllFields(clazz);
+        ReplacePlace.HowReplace(ele -> {
+            String newLine =ele+"";
+            map.put("lineNum",map.get("lineNum")+1);
+            if (newLine.contains("<for>")){
+                for (int i=map.get("lineNum");i<list.size();i++){
+                    String forStr =list.get(i)+"";
+                    if (forStr.contains("</for>")){
+                        list.set(i,"<abandon>");
+                        break;
+                    }
+                    mapStr.put("forStr",mapStr.get("forStr")+forStr);
+                    list.set(i,"<abandon>");
+                }
+                String forStr ="";
+                for (Field field:fieldList){
+                    Description description =field.getAnnotation(Description.class);
+                    String fortemp =mapStr.get("forStr");
+                    if (fortemp.contains("<lable>")){
+                        String lable =getDescriptionMsg(description,"lable",field);
+                        fortemp =fortemp.replaceAll("<lable>",lable);
+                    }
+                    if (fortemp.contains("<property>")){
+                        String property =getDescriptionMsg(description,"prop",field);
+                        fortemp =fortemp.replaceAll("<property>",property);
+                    }
+                    forStr +=fortemp;
+                }
+                newLine =forStr;
+                mapStr.put("forStr","");
+            }else {
+                if (!newLine.contains("<abandon>")){
+                    if (newLine.contains("<lable>")){
+                        String lable =clazz.getSimpleName();
+                        newLine =newLine.replaceAll("<lable>",lable);
+                    }
+                    if (newLine.contains("<property>")){
+                        String property =clazz.getSimpleName();
+                        newLine =newLine.replaceAll("<property>",property);
+                    }
+                    if (newLine.contains("<name>")){
+                        String tabLable =clazz.getSimpleName();
+                        newLine =newLine.replaceAll("<name>",tabLable);
+                    }
+                }
+            }
+            list1.add(newLine);
+            /*if (!newLine.contains("<abandon>")){
+                list1.add(newLine);
+            }*/
+        },list);
+        return list1;
+    }
 
 
+
+    private String getDescriptionMsg(Description description,String type,Field field){
+        if (description==null){
+            return  "";
+        }
+        if (type.equals("lable")){
+           String lable= description.label();
+           if ("".equals(lable)){
+               return field.getName();
+           }
+           return lable;
+        }else if (type.equals("prop")){
+            String prop= description.prop();
+            if ("".equals(prop)){
+                return field.getName();
+            }
+            return prop;
+        }else if (type.equals("searchType")){
+            String searchType= description.searchType();
+            if ("".equals(searchType)){
+                return field.getName();
+            }
+            return searchType;
+        }else if  (type.equals("search")){
+            if (description.search()){
+                return "true";
+            }
+            return "";
+        }else if  (type.equals("isColumn")){
+            if (description.isColumn()){
+                return "true";
+            }
+            return "";
+        }else if  (type.equals("tabLable")){
+            String tabLable= description.tabLable();
+            if ("".equals(tabLable)){
+                return field.getType().getSimpleName();
+            }
+            return tabLable;
+        }
+       return "";
+    }
 
 
 }

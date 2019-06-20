@@ -5,29 +5,13 @@
               size="mini"
               label-width="80px">
          <el-row>
+         <for>
             <el-col :span="4">
-               <el-form-item label="活动名称">
-                 <el-input v-model="serchObj['name']"/>
+               <el-form-item label="<lable>">
+                 <el-input v-model="serchObj['<property>']" placeholder="请输入"/>
                </el-form-item>
             </el-col>
-            <el-col :span="4">
-              <el-form-item label="活动时间">
-                 <el-date-picker v-model="serchObj['time']"
-                                 type="datetime"
-                                 placeholder="选择日期时间">
-                 </el-date-picker>
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-               <el-form-item label="活动区域">
-                    <el-select v-model="form.region" placeholder="请选择活动区域">
-                      <el-option v-for="(item,index) in selectData"
-                                               :key="index"
-                                               :label="item.lable"
-                                               :value="item.value"/>
-                    </el-select>
-               </el-form-item>
-            </el-col>
+         </for>
             <el-col :span="4">
               <el-button type="primary"
                          size="mini"
@@ -44,9 +28,11 @@
       </el-form>
       <el-table :data="tableData"
                 style="width: 100%">
+        <for>
          <el-table-column
-                 label="商品 ID"
-                 prop="id"/>
+                 label="<lable>"
+                 prop="<property>"/>
+        </for>
          <el-table-column label="操作" :min-width="60">
                  <template slot-scope="scope">
                    <el-button type="text" size="mini" @click="edit('testForm',scope.row)">编辑</el-button>
@@ -71,8 +57,6 @@
   @Component
   export default class TestTalbles extends Mixins(TableBase)  {
 
-    templateSearch = ' url like t and (url like t or  companyId eq 1)'
-
     serchObj = {}
 
     params = {
@@ -94,7 +78,7 @@
       this.filterByserchObj()
     }
     filterByserchObj () {
-          this.search(this.templateSearch, this.serchObj, this.params, 'menuFunction').then(ele => {
+          this.search('', this.serchObj, this.params, '').then(ele => {
             if (ele.code === 0) {
               this.tableData = ele.data.list
               this.totalPage = ele.data.total

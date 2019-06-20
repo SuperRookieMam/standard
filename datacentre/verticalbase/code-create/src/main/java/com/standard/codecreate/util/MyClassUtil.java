@@ -3,7 +3,10 @@ package com.standard.codecreate.util;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class MyClassUtil<T> {
@@ -107,15 +110,22 @@ public class MyClassUtil<T> {
      * @return  Map<字段名,Field>
      * */
     public static List<Field> getAllFields(Class clazz){
-        Class superClass =clazz.getSuperclass();
         List<Field> list =new ArrayList<>();
+        Class superClass =clazz.getSuperclass();
         boolean flag =superClass!=null;
         while (flag){
-            list.addAll(Arrays.asList(superClass.getDeclaredFields()));
+           List<Field> list1 = Arrays.asList(superClass.getDeclaredFields())
+                            .stream().filter(ele ->!ele.getName().equals("serialVersionUID"))
+                            .collect(Collectors.toList());
+
+            list.addAll(list1);
             superClass =superClass.getSuperclass();
             flag =superClass!=null;
         }
-        list.addAll(Arrays.asList(clazz.getDeclaredFields()));
+        List<Field> list1 = Arrays.asList(clazz.getDeclaredFields())
+                .stream().filter(ele ->!ele.getName().equals("serialVersionUID"))
+                .collect(Collectors.toList());
+        list.addAll(list1);
         return list;
     }
 }

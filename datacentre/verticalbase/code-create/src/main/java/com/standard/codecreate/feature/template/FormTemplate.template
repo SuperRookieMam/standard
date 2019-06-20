@@ -6,20 +6,16 @@
                  label-width="100px"
                  size="mini">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-         <el-tab-pane label="用户管理" name="first">
-            <el-row>
-               <el-col :span="12">
-                  <el-form-item label="活动名称" prop="name">
-                      <el-input v-model="FormData.name"/>
-                  </el-form-item>
+         <el-tab-pane label="<lable>" name="<name>">
+          <for>
+           <el-row>
+             <el-col :span="12">
+                <el-form-item label="<lable>" prop="<property>">
+                   <el-input v-model="formData.<property>"/>
+                 </el-form-item>
                 </el-col>
-            </el-row>
-         </el-tab-pane>
-         <el-tab-pane label="用户管理" name="first">
-            <test-table/>
-         </el-tab-pane>
-         <el-tab-pane label="表单" name="first">
-            <router-view/>
+           </el-row>
+          </for>
          </el-tab-pane>
       </el-tabs>
       <el-row>

@@ -1,5 +1,7 @@
 package com.standard.codecreate.feature.entity;
 
+import com.standard.codecreate.feature.annotation.Description;
+import com.standard.codecreate.feature.annotation.IsCreate;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,22 +14,26 @@ import javax.persistence.*;
  */
 @Getter
 @Setter
+@IsCreate
 @Entity
 public class OAuthRefreshToken  {
     private static final long serialVersionUID = 9080251217485358480L;
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "id")
+@Description
     private Long id;
     /**
      * 该字段的值是将refresh_token的值通过MD5加密后存储的.
      */
     @Column(name = "token_id")
+@Description
     private String tokenId;
 
     /**
      * 存储将OAuth2Authentication.java对象序列化后的二进制数据.
      */
     @Column(name = "authentication")
+@Description
     private String authentication;
 }

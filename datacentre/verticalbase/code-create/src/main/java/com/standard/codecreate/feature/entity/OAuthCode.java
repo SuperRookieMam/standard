@@ -1,6 +1,8 @@
 package com.standard.codecreate.feature.entity;
 
 
+import com.standard.codecreate.feature.annotation.Description;
+import com.standard.codecreate.feature.annotation.IsCreate;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,23 +16,26 @@ import javax.persistence.*;
  */
 @Getter
 @Setter
+@IsCreate
 @Entity
 public class OAuthCode  {
-
     private static final long serialVersionUID = 7086367203392700303L;
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "id")
+@Description
     private Long id;
     /**
      * 存储服务端系统生成的code的值(未加密).
      */
     @Column(name = "code")
+@Description
     private String code;
     /**
      * 存储将AuthorizationRequestHolder.java对象序列化后的二进制数据.
      */
     @Column(name = "authentication")
+@Description
     private String authentication;
 
 
