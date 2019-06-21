@@ -12,13 +12,6 @@ import java.util.Map;
 
 public class CreateFileUtil {
 
-    public static void main(String[] args) throws Exception {
-       createAllFile("com.standard.codecreate.feature.entity",
-                     "D:\\code\\source\\ideaSource\\standard\\datacentre\\verticalbase\\code-create\\src\\main\\java\\com\\standard\\codecreate\\feature\\template",
-                      "C:\\Users\\绝世好男人\\Desktop");
-
-    }
-
     public static void createAllFile(String packageName,String templatePath,String sourcePath) throws Exception {
         // 获取指定包名下面所有加了注解需要生成文件的实体类
        File file = getFileByPackage(packageName);

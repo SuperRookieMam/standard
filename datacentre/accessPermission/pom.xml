@@ -13,6 +13,7 @@
     <artifactId>accessPermission</artifactId>
     <modules>
         <module>oauthCommon</module>
+        <module>oauthserver</module>
     </modules>
     <groupId>com.standard</groupId>
     <version>1.0-SNAPSHOT</version>
