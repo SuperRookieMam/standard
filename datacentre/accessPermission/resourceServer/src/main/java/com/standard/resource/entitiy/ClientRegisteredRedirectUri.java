@@ -1,4 +1,4 @@
-package com.standard.server.entitiy;
+package com.standard.resource.entitiy;
 
 import com.standard.base.entity.BaseEntity;
 import com.standard.codecreate.feature.annotation.IsCreate;

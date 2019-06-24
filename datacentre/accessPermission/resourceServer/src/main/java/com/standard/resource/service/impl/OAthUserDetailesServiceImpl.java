@@ -1,19 +1,17 @@
-package com.standard.server.service.impl;
+package com.standard.resource.service.impl;
 
 import com.standard.base.service.impl.BaseServiceImpl;
 import com.standard.oauthCommon.dto.UserDetailsDto;
 import com.standard.orm.componet.feature.DynamicTypeSelect;
-import com.standard.server.entitiy.OAthUserDetailes;
-import com.standard.server.service.OAthUserDetailesService;
+import com.standard.resource.entitiy.OAthUserDetailes;
+import com.standard.resource.service.OAthUserDetailesService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.oauth2.provider.approval.Approval;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
-import java.util.Collection;
 import java.util.List;
 
 @Service

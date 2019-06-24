@@ -1,6 +1,7 @@
 package com.standard.base.service;
 
 import com.standard.base.componet.params.DynamicParam;
+import com.standard.base.dao.BaseRepository;
 import com.standard.base.entity.BaseEntity;
 import com.standard.orm.componet.feature.PageInfo;
 
@@ -32,4 +33,6 @@ public interface BaseService<T extends BaseEntity,ID extends Serializable> {
     T insertByEntity(T entity);
 
     List<T> insertByEntitys(Iterable<T> entitys);
+
+    BaseRepository<T,ID> getBaseRepository();
 }

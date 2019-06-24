@@ -15,6 +15,7 @@
         <module>oauthCommon</module>
         <module>oauthserver</module>
         <module>securityCommon</module>
+        <module>resourceServer</module>
     </modules>
 
     <groupId>com.standard</groupId>

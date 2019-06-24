@@ -25,5 +25,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .permitAll(); //新增login form支持用户登录及授权
     }
-
 }
