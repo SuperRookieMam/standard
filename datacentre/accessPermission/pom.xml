@@ -10,13 +10,16 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>accessPermission</artifactId>
+
     <modules>
         <module>oauthCommon</module>
         <module>oauthserver</module>
+        <module>securityCommon</module>
     </modules>
+
     <groupId>com.standard</groupId>
     <version>1.0-SNAPSHOT</version>
+    <artifactId>accessPermission</artifactId>
     <packaging>pom</packaging>
 
 

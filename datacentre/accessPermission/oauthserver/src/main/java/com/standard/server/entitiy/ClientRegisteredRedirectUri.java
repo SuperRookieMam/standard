@@ -1,6 +1,8 @@
 package com.standard.server.entitiy;
 
 import com.standard.base.entity.BaseEntity;
+import com.standard.codecreate.feature.annotation.IsCreate;
+import com.standard.oauthCommon.domain.BaseClientRegisteredRedirectUri;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,9 +11,10 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
+@IsCreate
 @Table(name = "client_registered_redirect_uri_",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"client_id_", "redirect_uri_"})},
-        indexes = {@Index(columnList = "client_id_")})
+        indexes= {@Index(columnList = "client_id_")})
 public class ClientRegisteredRedirectUri extends BaseEntity {
 
     private static final long serialVersionUID = 5659395845747258201L;

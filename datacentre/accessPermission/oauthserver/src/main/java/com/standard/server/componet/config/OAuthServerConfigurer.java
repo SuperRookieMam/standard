@@ -1,10 +1,14 @@
 package com.standard.server.componet.config;
 
-import com.standard.server.service.OAuthClientDetailsService;
+
+import com.standard.server.componet.feature.DefaultTokenServicesCover;
+import com.standard.server.componet.feature.TokenStoreCover;
+import com.standard.server.service.OAthUserDetailesService;
+import com.standard.server.service.OauthClientDetailsService;
+import com.standard.server.service.UserApprovalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -12,15 +16,27 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
+import org.springframework.security.oauth2.provider.approval.ApprovalStoreUserApprovalHandler;
+import org.springframework.security.oauth2.provider.approval.UserApprovalHandler;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationManager;
+import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
+import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 
 @Configuration
 @EnableAuthorizationServer
 public class OAuthServerConfigurer extends AuthorizationServerConfigurerAdapter {
 
     @Autowired
-    OAuthClientDetailsService oAuthClientDetailsService;
-
+    private OauthClientDetailsService oauthClientDetailsService;
+    @Autowired
+    private TokenStoreCover tokenStore;
+    @Autowired
+    private UserApprovalService userApprovalService;
+    @Autowired
+    private OAthUserDetailesService oAthUserDetailesService;
     /**
      *配置授权服务器的安全性，这实际上意味着/oauth/token端点。/oauth/authorize端点也需要是安全的，
      * 但这是一个普通的面向用户的端点，应该与UI的其他部分以相同的方式进行保护，因此这里不讨论。
@@ -49,38 +65,21 @@ public class OAuthServerConfigurer extends AuthorizationServerConfigurerAdapter 
         security.passwordEncoder(getPassWordEncoder());
     }
 
-
-    /**
-     *  配置{@link ClientDetailsService}， 例如声明单个 客户机 及其属性。
-     *  请注意,除非启用了{@link AuthenticationManager}，否则不启用密码授予(即使一些客户机允许)
-     *  提供给{@link #configure(AuthorizationServerEndpointsConfigurer)}。
-     *  至少有一个客户，或一个完整的 必须声明已形成的自定义{@link ClientDetailsService}，否则服务器将无法启动。
-     * */
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.withClientDetails(this.oAuthClientDetailsService);
+        clients.withClientDetails(oauthClientDetailsService);
     }
 
-    /**
-     * 配置授权服务器端点的非安全性特性，如令牌存储、令牌 自定义、用户批准和授予类型。
-     * 默认情况下，您不应该做任何事情，除非您需要 密码授予，在这种情况下，
-     * 您需要提供一个{@link AuthenticationManager}。
-     */
+    @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-
-
-
-//        AuthorizationServerTokenServices tokenService = tokenService();
-//        endpoints.tokenServices(tokenService);
-//        endpoints.userApprovalHandler(userApprovalHandler());
-//        endpoints.reuseRefreshTokens(false);
-//        // 如果要使用RefreshToken可用，必须指定UserDetailsService
-//        endpoints.userDetailsService(userDetailesService);
-//        endpoints.authenticationManager(((AuthorizationServerTokenService) tokenService).getAuthenticationManager());
+        DefaultTokenServicesCover defaultTokenServicesCover =getTokenService();
+        endpoints.tokenServices(defaultTokenServicesCover);
+        endpoints.userApprovalHandler(userApprovalHandler());
+        endpoints.authenticationManager(oAuth2AuthenticationManager(defaultTokenServicesCover));
+        endpoints.reuseRefreshTokens(true);
+        // 如果要使用RefreshToken可用，必须指定UserDetailsService
+        endpoints.userDetailsService(oAthUserDetailesService);
     }
-
-
-
 
 
     @Bean
@@ -88,5 +87,35 @@ public class OAuthServerConfigurer extends AuthorizationServerConfigurerAdapter 
         // 使用系统的加密
         return new BCryptPasswordEncoder();
     }
+    @Bean
+    public DefaultTokenServicesCover getTokenService(){
+        DefaultTokenServicesCover tokenServices =new DefaultTokenServicesCover();
+        tokenServices.setTokenStore(tokenStore);
+        tokenServices.setClientDetailsService(oauthClientDetailsService);
+        tokenServices.setSupportRefreshToken(true);
+        tokenServices.setReuseRefreshToken(true);
+        tokenServices.setAuthenticationManager(oAuth2AuthenticationManager(tokenServices));
+        return tokenServices;
+    }
+    @Bean
+    public OAuth2AuthenticationManager oAuth2AuthenticationManager(DefaultTokenServicesCover tokenServices){
+        OAuth2AuthenticationManager oAuth2AuthenticationManager =new OAuth2AuthenticationManager();
+        oAuth2AuthenticationManager.setClientDetailsService(oauthClientDetailsService);
+        oAuth2AuthenticationManager.setTokenServices(tokenServices);
+        oAuth2AuthenticationManager.setResourceId("1");
+        return oAuth2AuthenticationManager;
+    }
 
+    @Bean
+    public UserApprovalHandler userApprovalHandler() {
+        // 存储用户的授权结果
+        ApprovalStoreUserApprovalHandler handler = new ApprovalStoreUserApprovalHandler();
+        handler.setApprovalStore(userApprovalService);
+        handler.setRequestFactory(requestFactory());
+        return handler;
+    }
+    @Bean
+    public OAuth2RequestFactory requestFactory() {
+        return new DefaultOAuth2RequestFactory(oauthClientDetailsService);
+    }
 }

@@ -23,7 +23,7 @@ import java.util.Set;
 
 public class BaseServiceImpl<T extends BaseEntity,ID extends Serializable> implements BaseService<T, ID> {
     @Autowired
-    BaseRepository<T,ID> baseRepository;
+    protected  BaseRepository<T,ID> baseRepository;
     @Override
     public T  findById(ID id) {
         return baseRepository.findById(id).get();

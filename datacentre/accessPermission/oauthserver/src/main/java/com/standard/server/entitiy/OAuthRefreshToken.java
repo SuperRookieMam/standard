@@ -1,6 +1,8 @@
 package com.standard.server.entitiy;
 
 import com.standard.base.entity.BaseEntity;
+import com.standard.codecreate.feature.annotation.IsCreate;
+import com.standard.oauthCommon.entity.MRefreshToken;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,25 +16,32 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "oauth_refresh_token",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"token_id"})},
-        indexes = {@Index(columnList = "token_id")})
-public class OAuthRefreshToken extends BaseEntity {
+@IsCreate
+@Table(name = "oauth_refresh_token_",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"token_id_"})},
+        indexes= {@Index(columnList = "token_id_")})
+public class OAuthRefreshToken extends BaseEntity implements MRefreshToken {
     private static final long serialVersionUID = 9080251217485358480L;
+
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id_")
     private Long id;
     /**
      * 该字段的值是将refresh_token的值通过MD5加密后存储的.
      */
-    @Column(name = "token_id")
+    @Column(name = "token_id_")
     private String tokenId;
 
     /**
      * 存储将OAuth2Authentication.java对象序列化后的二进制数据.
      */
-    @Column(name = "authentication")
+    @Column(name = "authentication_")
     private String authentication;
+
+    @Override
+    public String getValue() {
+        return tokenId;
+    }
 
 }

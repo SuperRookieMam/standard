@@ -42,10 +42,20 @@ public class CreateFileUtil {
             List<String> list1 =null;
             for (String name:templateNames){
                 list1 =new InitParmas().javaReplace(map.get(name),clazz);
+                String fileName = clazz.getSimpleName();
+                if (name.startsWith("Dao")){
+                    fileName+="Repository";
+                }else if (name.startsWith("ServiceImpl")){
+                    fileName+="ServiceImpl";
+                }else if (name.startsWith("Service")){
+                    fileName+="Service";
+                }else if (name.startsWith("Controller")){
+                    fileName+="Controller";
+                }
                 createFile(list1,
                            sourcePath,
                            name.substring(0,name.indexOf("Template")),
-                           clazz.getSimpleName(),
+                            fileName,
                            "java");
             }
         }

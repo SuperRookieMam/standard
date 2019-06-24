@@ -1,21 +1,24 @@
 package com.standard.server.entitiy;
 
 import com.standard.base.entity.BaseEntity;
+import com.standard.codecreate.feature.annotation.IsCreate;
 import com.standard.oauthCommon.entity.MClientDetails;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.util.*;
 
 @Getter
 @Setter
+@IsCreate
 @Entity
 @Table(name = "oauth_client_details_")
 @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
-public class OAuthClientDetails extends BaseEntity implements MClientDetails {
-    private static final long serialVersionUID = -267274771702220728L;
+public class OauthClientDetails extends BaseEntity implements MClientDetails{
+    private static final long serialVersionUID = -6124668003677932153L;
 
     @Id
     @Column(name = "client_id_")
@@ -34,14 +37,8 @@ public class OAuthClientDetails extends BaseEntity implements MClientDetails {
     @Column(name = "secret_required_")
     private boolean secretRequired = true;
 
-    /**
-     * 用于指定客户端(client)的访问密匙;
-     * 在注册时必须填写(也可由服务端自动生成).对于不同的grant_type,
-     * 该字段都是必须的. 在实际应用中的另一个名称叫appSecret,与client_secret是同一个概念.
-     */
     @Column(name = "client_secret_")
     private String clientSecret;
-
 
     /**
      * 此客户端对于某个接口的访问权限
@@ -54,7 +51,7 @@ public class OAuthClientDetails extends BaseEntity implements MClientDetails {
     @ElementCollection(fetch = FetchType.EAGER)
     @Column(name = "scope_")
     @CollectionTable(name = "client_scope_",
-            joinColumns = { @JoinColumn(name = "client_id", referencedColumnName = "client_id")})
+            joinColumns = { @JoinColumn(name = "client_id_", referencedColumnName = "client_id_")})
     private Set<String> scope = new HashSet<>();
 
 
@@ -72,8 +69,6 @@ public class OAuthClientDetails extends BaseEntity implements MClientDetails {
             @JoinColumn(name = "client_id_", referencedColumnName = "client_id_")
     })
     private Set<String> authorizedGrantTypes = new HashSet<>();
-
-
     /**
      * 客户端的重定向URI,可为空, 当grant_type为authorization_code或implicit时,
      * 在Oauth的流程中会使用并检查与注册时填写的redirect_uri是否一致.
@@ -94,25 +89,18 @@ public class OAuthClientDetails extends BaseEntity implements MClientDetails {
     @Column(name = "redirect_uri_")
     @CollectionTable(name = "client_registered_redirect_uri_",
             joinColumns = {@JoinColumn(name = "client_id_", referencedColumnName = "client_id_")})
-    private Set<String> registeredRedirectUri;
+    private Set<String> registeredRedirectUri =new HashSet<>();
 
-    /**
-     * 指定客户端所拥有的Spring Security的权限值,可选, 若有多个权限值,用逗号(,)分隔,
-     * 如: "ROLE_UNITY,ROLE_USER".对于是否要设置该字段的值,要根据不同的grant_type来判断,
-     * 若客户端在Oauth流程中需要用户的用户名(username)与密码(password)的(authorization_code,password), 
-     * 则该字段可以不需要设置值,因为服务端将根据用户在服务端所拥有的权限来判断是否有权限访问对应的API. 
-     * 但如果客户端在Oauth流程中不需要用户信息的(implicit,client_credentials), 
-     * 则该字段必须要设置对应的权限值, 因为服务端将根据该字段值的权限来判断是否有权限访问对应的API. 
-     * (请在spring-oauth-client项目中来测试不同grant_type时authorities的变化)
-     */
-    @OneToMany
-    @JoinColumn(name ="authorities_")
-    private Set<OAthGrantedAuthority> authorities = new HashSet<>();
+    @Transient
+    private Collection<GrantedAuthority> authorities =new ArrayList<>();
+
+    @Transient
+    private Map<String, Object> additionalInformation =new HashMap<>();
 
     /**
      * 设定客户端的access_token的有效时间值(单位:秒),可选, 若不设定值则使用默认的有效时间值(60 * 60 * 12, 12小时).
      */
-   @Column(name = "access_token_validity_seconds_")
+    @Column(name = "access_token_validity_seconds_")
     private Integer accessTokenValiditySeconds = 60 * 60 * 24*365;
 
     /**
@@ -120,7 +108,6 @@ public class OAuthClientDetails extends BaseEntity implements MClientDetails {
      */
     @Column(name = "refresh_token_validity_seconds_")
     private Integer refreshTokenValiditySeconds = 60 * 60 * 24 * 365;
-
 
     /**
      * 设置用户是否自动Approval操作, 默认值为 'false', 可选值包括 'true','false', 'read','write'. 
@@ -131,44 +118,13 @@ public class OAuthClientDetails extends BaseEntity implements MClientDetails {
     @Column(name = "auto_approve_")
     private boolean autoApprove = false;
 
-    /**
-     * 用于标识客户端是否已存档(即实现逻辑删除),默认值为'0'(即未存档). 
-     * 对该字段的具体使用请参考CustomJdbcClientDetailsService.java,在该类中,
-     * 扩展了在查询client_details的SQL加上archived = 0条件 (扩展字段)
-     */
-    @Column(name = "archived_")
-    private Integer archived=0;
-    /**
-     * 设置客户端是否为受信任的,默认为'0'(即不受信任的,1为受信任的). 
-     * 该字段只适用于grant_type="authorization_code"的情况,
-     * 当用户登录成功后,若该值为0,则会跳转到让用户Approve的页面让用户同意授权, 
-     * 若该字段为1,则在登录后不需要再让用户Approve同意授权(因为是受信任的). 
-     * 对该字段的具体使用请参考OauthUserApprovalHandler.java. (扩展字段)
-     */
-    @Column(name = "trusted_")
-    private Integer trusted=1;
-
-
-
-    /**
-     * 这是一个预留的字段,在Oauth的流程中没有实际的使用,可选,但若设置值,
-     * 必须是JSON格式的数据,如:  {"country":"CN","country_code":"086"}
-     * 按照spring-security-oauth项目中对该字段的描述 
-     * Additional information for this client, not need by the vanilla OAuth protocol but might be useful,
-     * for example,for storing descriptive information. 
-     * (详见ClientDetails.java的getAdditionalInformation()方法的注释)在实际应用中,
-     * 可以用该字段来存储关于客户端的一些其他信息,如客户端的国家,地区,注册时的IP地址等等.
-     */
-    @Transient
-    private Map<String, Object> additionalInformation = new LinkedHashMap<>();
-
     @Override
     public boolean isScoped() {
-        return !scope.isEmpty();
+        return true;
+    }
+    @Override
+    public boolean isAutoApprove(String scope) {
+        return autoApprove;
     }
 
-    @Override
-    public boolean isAutoApprove(String s) {
-        return false;
-    }
 }

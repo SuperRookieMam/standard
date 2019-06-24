@@ -1,6 +1,7 @@
 package com.standard.server.entitiy;
 
 import com.standard.base.entity.BaseEntity;
+import com.standard.codecreate.feature.annotation.IsCreate;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -10,6 +11,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
+@IsCreate
 @Table(name = "resource_server_")
 @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
 public class ResourceServer extends BaseEntity {

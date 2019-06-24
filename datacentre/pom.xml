@@ -12,6 +12,7 @@
         <module>verticalbase</module>
         <module>dependences</module>
         <module>testProject</module>
+        <module>accessPermission</module>
     </modules>
 
 

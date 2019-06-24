@@ -1,9 +1,13 @@
 package com.standard.server.entitiy;
 
 import com.standard.base.entity.BaseEntity;
+import com.standard.codecreate.feature.annotation.IsCreate;
+import com.standard.oauthCommon.dto.RefreshTokenDto;
 import com.standard.oauthCommon.entity.MOAuthAccessToken;
+import com.standard.oauthCommon.utils.SerializationUtils;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 
 import javax.persistence.*;
@@ -17,138 +21,89 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@IsCreate
 @Table(name = "oauth_access_token_",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"authentication_id"})},
-        indexes = {@Index(columnList = "authentication_id")})
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"authentication_id_"})},
+        indexes = {@Index(columnList = "authentication_id_")})
+@GenericGenerator(name = "jpa-uuid", strategy = "uuid")
 public class OAuthAccessToken extends BaseEntity implements MOAuthAccessToken {
-
     private static final long serialVersionUID = -4432050622441349608L;
-
     /**
      * 该字段的值是将access_token的值通过MD5加密后存储的.
      */
     @Id
     @Column(name = "token_id_")
+    @GeneratedValue(generator = "jpa-uuid")
     private String tokenId;
+    /**
+     * accessToken序列化后的base64字符
+     * */
+    @Lob
+    @Column(name = "token_")
+    private String token;
+    /**
+     * 该字段具有唯一性, 其值是根据当前的username(如果有),
+     * client_id与scope通过MD5加密生成的.
+     * 具体实现请参考DefaultAuthenticationKeyGenerator.java类.
+     */
+    @Column(name = "authentication_id_")
+    private String authenticationId;
+    /**
+     * 存储将OAuth2Authentication.java对象序列化后的二进制数据.
+     */
+    @Lob
+    @Column(name = "authentication_")
+    private String authentication;
+    /**
+     *
+     * */
+    @Column(name = "client_id_")
+    private String clientId;
+    /**
+     * 该字段的值是将refresh_token的值通过MD5加密后存储的.
+     */
+    @Column(name = "refresh_token_")
+    private String refreshToken;
 
     @Column(name = "token_type_")
     private String tokenType;
 
+    @Column(name = "scope_")
+    private Set<String> scope;
+
+    @Column(name = "expiration_")
+    private Date expiration;
     /**
-     * 存储将OAuth2AccessToken.java对象序列化后的二进制数据,
-     * 是真实的AccessToken的数据值.
-     * */
-    @Column(name = "value_")
-    private String value;
+     * 登录时的用户名, 若客户端没有用户名(如grant_type="client_credentials"),
+     * 则该值等于client_id
+     */
+    @Column(name = "user_name_")
+    private String userName;
 
-
-
-
-    @Override
-    public boolean isExpired() {
-        return false;
-    }
-
-
-
-    @Override
-    public Map<String, Object> getAdditionalInformation() {
-        return null;
-    }
-
-    @Override
-    public Set<String> getScope() {
-        return null;
-    }
+    @Transient
+    private Map<String,Object> additionalInformation;
 
     @Override
     public OAuth2RefreshToken getRefreshToken() {
-        return null;
+        RefreshTokenDto refreshTokenDto =null;
+        if (refreshToken!=null)
+            refreshTokenDto = SerializationUtils.deserialize(refreshToken);
+        return refreshTokenDto;
     }
     @Override
-    public Date getExpiration() {
-        return null;
+    public boolean isExpired() {
+        return expiration.getTime()<System.currentTimeMillis();
+    }
+    @Override
+    public int getExpiresIn() {
+        return expiration.getTime()<System.currentTimeMillis()
+                        ?0
+                        :(int)((System.currentTimeMillis()-expiration.getTime())/1000);
     }
 
     @Override
-    public int getExpiresIn() {
-        return 0;
+    public String getValue() {
+        return tokenId;
     }
-//    /**
-//     * 存储将OAuth2AccessToken.java对象序列化后的二进制数据, 是真实的AccessToken的数据值.
-//     */
-//
-//    /**
-//     * 该字段具有唯一性, 其值是根据当前的username(如果有),
-//     * client_id与scope通过MD5加密生成的.
-//     * 具体实现请参考DefaultAuthenticationKeyGenerator.java类.
-//     */
-//    @Column(name = "authentication_id")
-//    private String authenticationId;
-//
-//    /**
-//     * 存储将OAuth2Authentication.java对象序列化后的二进制数据.
-//     */
-//    @Column(name = "authentication")
-//    @Lob
-//    private String authentication;
-//    /**
-//     *
-//     * */
-//    @Column(name = "client_id")
-//    private String clientId;
-//
-//    /**
-//     * 登录时的用户名, 若客户端没有用户名(如grant_type="client_credentials"),
-//     * 则该值等于client_id
-//     */
-//    @Column(name = "user_name")
-//    private String userName;
-//
-//    /**
-//     * 该字段的值是将refresh_token的值通过MD5加密后存储的.
-//     */
-//    @Column(name = "refresh_token")
-//    private String refreshToken;
-//
-//    @ManyToOne(cascade = CascadeType.MERGE)
-//    @JoinColumn(name = "role_info")
-//    private RoleInfo roleInfo;
-//
-////    @ElementCollection(fetch = FetchType.EAGER)
-////    @Column(name = "oath_granted_authority")
-//////    @JoinTable(name = "oath_granted_authority_map",
-//////            inverseJoinColumns ={@JoinColumn(name = "client_id", referencedColumnName = "client_id"),
-//////                    @JoinColumn(name = "role_info", referencedColumnName = "role_info")}/*,
-//////            joinColumns = {@JoinColumn(name = "client_id", referencedColumnName = "client_id"),
-//////                    @JoinColumn(name = "role_info", referencedColumnName = "role_info")}*/)
-////    @CollectionTable(joinColumns = {@JoinColumn(name = "client_id", referencedColumnName = "client_id"),
-////            @JoinColumn(name = "role_info", referencedColumnName = "role_info")})
-////    private Set<OAthGrantedAuthority> oAthGrantedAuthorities = Collections.emptySet();
-//
-//    @Column(name = "token_type")
-//    private String tokenType;
-//
-//    @Column(name = "scope")
-//    private String scope;
-//
-//    @Column(name = "expiration")
-//    private Date expiration;
-//
-//    public Set<String> getScope() {
-//        JSONArray jsonArray = JSONArray.parseArray(this.scope);
-//        Set<String> set = new  HashSet();
-//        for (int i = 0; i < jsonArray.size(); i++) {
-//            set.add(jsonArray.getString(i));
-//        }
-//        return set;
-//    }
-//    private void setScope(String scope) {
-//        this.scope = scope;
-//    }
-//    public void setScope(Set<String> scope) {
-//        JSONArray jsonArray =new JSONArray();
-//        jsonArray.addAll(scope);
-//        setScope(jsonArray.toString()) ;
-//    }
+
 }
