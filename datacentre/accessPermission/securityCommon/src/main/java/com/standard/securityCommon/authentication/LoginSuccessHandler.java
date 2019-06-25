@@ -18,8 +18,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler, Initia
 
     @Autowired(required = false)
     private ObjectMapper objectMapper;
-
-    @Override//成功后吧正确的头肯反悔给用户
+    // 验证成功要做的事情
+    @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         Object principal = authentication.getPrincipal();

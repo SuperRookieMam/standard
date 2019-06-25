@@ -9,7 +9,6 @@ import org.springframework.security.web.access.intercept.FilterInvocationSecurit
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -25,12 +24,10 @@ public class RequestAuthoritiesFilterInvocationSecurityMetadataSource implements
 
     private final  String ANT_PATH ="path";
     private final  String REGEXP ="regexp";
-    private final  String ACCESSTOKEN ="access_token";
 
     public RequestAuthoritiesFilterInvocationSecurityMetadataSource() {
         super();
     }
-
     public RequestAuthoritiesFilterInvocationSecurityMetadataSource(
             RequestAuthoritiesService requestAuthoritiesService) {
         super();
@@ -48,29 +45,13 @@ public class RequestAuthoritiesFilterInvocationSecurityMetadataSource implements
     public Collection<ConfigAttribute> getAttributes(Object object) throws IllegalArgumentException {
 
         final HttpServletRequest request = ((FilterInvocation) object).getRequest();
-        String accesstoken =request.getHeader(ACCESSTOKEN)==null?request.getParameter(ACCESSTOKEN):request.getHeader(ACCESSTOKEN);
-        //如果获取不到access_token直接直接投票不能访问
-        if (StringUtils.isEmpty(accesstoken)){
-            RequestAuthorityAttribute requestAuthorityAttribute =new RequestAuthorityAttribute();
-            requestAuthorityAttribute.setAccessVisit(false);
-            List<ConfigAttribute> list =new ArrayList<>();
-            list.add(requestAuthorityAttribute);
-            return list;
-        }
-        //比如说属性菜单
-        List<RequestAuthorityAttribute> allAttributes = requestAuthoritiesService.listAllAttributes(accesstoken);
-        // 过滤掉不符合规格的请求，看看有没有符合这个请求的属性
-        Collection<ConfigAttribute>  ret = allAttributes.stream().filter(attribute -> match(request, attribute)).collect(Collectors.toList());
-        RequestAuthorityAttribute requestAuthorityAttribute =new RequestAuthorityAttribute();
-        if (ret.isEmpty()){
-            requestAuthorityAttribute.setAccessVisit(false);
-        }else {
-            requestAuthorityAttribute.setAccessVisit(true);
-        }
-        List<ConfigAttribute> list =new ArrayList<>();
-        list.add(requestAuthorityAttribute);
-        //过滤掉
-        return  list;
+        //获取设置了权限的请求接口，相同method 的权限信息
+        List<RequestAuthorityAttribute> allAttributes = requestAuthoritiesService.listAllAttributes(request.getMethod());
+        // 过滤掉路径不匹配的请求信息
+        return allAttributes.stream()
+                            .filter(attribute -> match(request, attribute))
+                            .collect(Collectors.toList());
+
     }
 
 

@@ -4,7 +4,7 @@ package com.standard.server.componet.config;
 import com.standard.server.componet.feature.DefaultTokenServicesCover;
 import com.standard.server.componet.feature.TokenStoreCover;
 import com.standard.server.service.OAthUserDetailesService;
-import com.standard.server.service.OauthClientDetailsService;
+import com.standard.server.service.OAuthClientDetailsService;
 import com.standard.server.service.UserApprovalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -21,16 +21,13 @@ import org.springframework.security.oauth2.provider.approval.ApprovalStoreUserAp
 import org.springframework.security.oauth2.provider.approval.UserApprovalHandler;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationManager;
 import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
-import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
-import org.springframework.security.oauth2.provider.token.TokenStore;
 
 @Configuration
 @EnableAuthorizationServer
 public class OAuthServerConfigurer extends AuthorizationServerConfigurerAdapter {
 
     @Autowired
-    private OauthClientDetailsService oauthClientDetailsService;
+    private OAuthClientDetailsService oauthClientDetailsService;
     @Autowired
     private TokenStoreCover tokenStore;
     @Autowired

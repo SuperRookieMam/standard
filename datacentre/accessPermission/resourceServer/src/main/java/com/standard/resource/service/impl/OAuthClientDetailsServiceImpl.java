@@ -3,14 +3,14 @@ package com.standard.resource.service.impl;
 import com.standard.base.service.impl.BaseServiceImpl;
 import com.standard.oauthCommon.dto.ClientDetailsDto;
 import com.standard.resource.entitiy.OauthClientDetails;
-import com.standard.resource.service.OauthClientDetailsService;
+import com.standard.resource.service.OAuthClientDetailsService;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientRegistrationException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 @Service
-public class OauthClientDetailsServiceImpl extends BaseServiceImpl<OauthClientDetails, String> implements OauthClientDetailsService {
+public class OAuthClientDetailsServiceImpl extends BaseServiceImpl<OauthClientDetails, String> implements OAuthClientDetailsService {
     @Override
     public ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException {
         OauthClientDetails oauthClientDetails =findById(clientId);

@@ -17,7 +17,7 @@ import java.util.*;
 @Entity
 @Table(name = "oauth_client_details_")
 @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
-public class OauthClientDetails extends BaseEntity implements MClientDetails{
+public class OAuthClientDetails extends BaseEntity implements MClientDetails{
     private static final long serialVersionUID = -6124668003677932153L;
 
     @Id

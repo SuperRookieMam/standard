@@ -5,5 +5,5 @@ import com.standard.resource.entitiy.OauthClientDetails;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface OauthClientDetailsRepository extends BaseRepository<OauthClientDetails,String> {
+public interface OAuthClientDetailsRepository extends BaseRepository<OauthClientDetails,String> {
 }
