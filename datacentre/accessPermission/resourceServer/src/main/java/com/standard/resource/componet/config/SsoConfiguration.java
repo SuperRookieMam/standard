@@ -27,8 +27,6 @@ import org.springframework.security.web.authentication.preauth.AbstractPreAuthen
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import javax.annotation.PostConstruct;
-
 
 @Configuration
 @EnableConfigurationProperties(OAuth2SsoProperties.class)
@@ -37,7 +35,7 @@ public class SsoConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private FilterSecurityInterceptor filterSecurityInterceptor;
-
+    @Autowired
     private DefaultTokenServicesCover defaultTokenServicesCover;
 
     @Autowired
@@ -94,14 +92,16 @@ public class SsoConfiguration extends WebSecurityConfigurerAdapter {
     /**
      * 指定解码Token信息的解码器
      */
-    @PostConstruct
-    public void config() {
+//    @PostConstruct
+    @Bean
+    public DefaultTokenServicesCover config() {
         defaultTokenServicesCover = new DefaultTokenServicesCover();
         defaultTokenServicesCover.setTokenStore(tokenStoreCover);
         defaultTokenServicesCover.setClientDetailsService(oauthClientDetailsService);
         defaultTokenServicesCover.setSupportRefreshToken(true);
         defaultTokenServicesCover.setReuseRefreshToken(true);
         defaultTokenServicesCover.setAuthenticationManager(oAuth2AuthenticationManager(defaultTokenServicesCover));
+        return defaultTokenServicesCover;
     }
     @Bean
     public OAuth2AuthenticationManager oAuth2AuthenticationManager(@Autowired  DefaultTokenServicesCover tokenServices){
