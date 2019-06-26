@@ -9,25 +9,21 @@ import com.standard.resource.service.*;
 import com.standard.securityCommon.access.RequestAuthoritiesAccessDecisionVoter;
 import com.standard.securityCommon.access.RequestAuthoritiesFilterInvocationSecurityMetadataSource;
 import com.standard.securityCommon.provider.RequestAuthoritiesService;
+import com.sun.xml.bind.v2.TODO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDecisionVoter;
-import org.springframework.security.access.vote.AffirmativeBased;
+import org.springframework.security.access.vote.UnanimousBased;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationManager;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
-import org.springframework.security.web.util.matcher.RequestMatcher;
-import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,12 +50,12 @@ public class ResourceConfigure extends ResourceServerConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         // 指定所有的资源都要被保护
-        super.configure(http);
-        http.antMatcher("/**");
+      //  super.configure(http);
+      http.antMatcher("/**").authorizeRequests().anyRequest().authenticated();
         // 增加自定义的资源授权过滤器
-       http.addFilterBefore(interceptor(), FilterSecurityInterceptor.class);
+      http .addFilterBefore(interceptor(),FilterSecurityInterceptor.class);
         // 认定那些时资源？
-       // http.requestMatcher(new BearerTokenRequestMatcher());
+      // http.requestMatcher(new BearerTokenRequestMatcher());
 
     }
     /**
@@ -70,24 +66,30 @@ public class ResourceConfigure extends ResourceServerConfigurerAdapter {
         // 添加过滤器
       FilterSecurityInterceptor interceptor = new FilterSecurityInterceptor();
         //投票过滤
-      List<AccessDecisionVoter<?>> voters = Collections.singletonList(getVoter());
-          //创建一个成功的控制权限
-           //UnanimousBased unanimousBased =new UnanimousBased(voters);
-       AccessDecisionManager accessDecisionManager = new AffirmativeBased(voters);
+      List<AccessDecisionVoter<?>> voters = Collections.singletonList(getmyVoter());
+        // 只要有一个投票器通过了就可以访问资源
+      // AccessDecisionManager accessDecisionManager = new AffirmativeBased(voters);
+        // 所有的投票器通过了才能访问资源
+        UnanimousBased unanimousBased =new UnanimousBased(voters);
+        // 一般以上的投票器通过了才能访问资源
+       // ConsensusBased consensusBased =new ConsensusBased(voters);
         //权限管理
-        interceptor.setAccessDecisionManager(accessDecisionManager);
+        interceptor.setAccessDecisionManager(unanimousBased);
         //这里封装后面voter需要的参数，还有那些地方要用到我也不晓得
        interceptor.setSecurityMetadataSource(securityMetadataSource());
+       //  todo  注意：这里默认的共享SecurityMetadataSource安全元素，默认的是true,
+        // todo 也就是说第一次获取获取过后，后面的全部用第一次获取的来投票，
+        // TODO 如果一个链条的投票安全元素不一样这里要把共享给关掉，不然会出一些幺蛾子
+       interceptor.setObserveOncePerRequest(false);
        return interceptor;
     }
-    @Bean
-    public  RequestAuthoritiesAccessDecisionVoter getVoter(){
+    public  RequestAuthoritiesAccessDecisionVoter getmyVoter(){
         RequestAuthoritiesAccessDecisionVoter voter =new RequestAuthoritiesAccessDecisionVoterImpl();
         ((RequestAuthoritiesAccessDecisionVoterImpl) voter).setOAthUserDetailesService(oAthUserDetailesService);
         ((RequestAuthoritiesAccessDecisionVoterImpl) voter).setUserRoleService(userRoleService);
         return voter;
     }
-    @Bean  //投票需要获取的元素，比较等等
+     //投票需要获取的元素，比较等等
     public FilterInvocationSecurityMetadataSource securityMetadataSource() {
         RequestAuthoritiesFilterInvocationSecurityMetadataSource MetadataSource
                 = new RequestAuthoritiesFilterInvocationSecurityMetadataSource();
@@ -95,7 +97,6 @@ public class ResourceConfigure extends ResourceServerConfigurerAdapter {
         return MetadataSource;
     }
 
-    @Bean
     public RequestAuthoritiesService getRequestAuthoritiesService(){
         RequestAuthoritiesService requestAuthoritiesService = new RequestAuthoritiesServiceImpl();
         ((RequestAuthoritiesServiceImpl) requestAuthoritiesService).setOAthGrantedAuthorityService(oAthGrantedAuthorityService);
@@ -107,7 +108,7 @@ public class ResourceConfigure extends ResourceServerConfigurerAdapter {
         // 指定这是一个restful service,不会保存会话状态
         resources.resourceId(ConstParam.RESOURCE_ID);
         resources.stateless(true);
-        resources.tokenServices( getDefaultTokenServicesCover());
+        resources.tokenServices(getDefaultTokenServicesCover());
     }
     @Bean
     @Primary
@@ -133,19 +134,19 @@ public class ResourceConfigure extends ResourceServerConfigurerAdapter {
         tokenStoreCover.setOAuthAccessTokenService(oAuthAccessTokenService);
         return tokenStoreCover;
     }
-    //除了     LOGIONPATH 路径 其他的资源全部要 走资源服务器验证
-    static class BearerTokenRequestMatcher implements RequestMatcher {
-
-        private boolean matchHeader(HttpServletRequest request) {
-            String authHeader = request.getHeader("Authorization");
-            return StringUtils.startsWithIgnoreCase(authHeader, OAuth2AccessToken.BEARER_TYPE);
-        }
-        @Override
-        public boolean matches(HttpServletRequest request) {
-            return matchHeader(request) || matchParameter(request);
-        }
-        public boolean matchParameter(HttpServletRequest request){
-            return !StringUtils.isEmpty(request.getParameter(OAuth2AccessToken.ACCESS_TOKEN));
-        }
-    }
+//    //除了     LOGIONPATH 路径 其他的资源全部要 走资源服务器验证
+//    static class BearerTokenRequestMatcher implements RequestMatcher {
+//
+//        private boolean matchHeader(HttpServletRequest request) {
+//            String authHeader = request.getHeader("Authorization");
+//            return StringUtils.startsWithIgnoreCase(authHeader, OAuth2AccessToken.BEARER_TYPE);
+//        }
+//        @Override
+//        public boolean matches(HttpServletRequest request) {
+//            return matchHeader(request) || matchParameter(request);
+//        }
+//        public boolean matchParameter(HttpServletRequest request){
+//            return !StringUtils.isEmpty(request.getParameter(OAuth2AccessToken.ACCESS_TOKEN));
+//        }
+//    }
 }

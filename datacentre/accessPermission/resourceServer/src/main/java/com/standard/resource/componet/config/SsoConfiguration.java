@@ -1,15 +1,17 @@
 package com.standard.resource.componet.config;
 
 
-import com.standard.resource.componet.constpackage.ConstParam;
 import com.standard.resource.componet.feature.DefaultTokenServicesCover;
 import com.standard.resource.componet.feature.TokenStoreCover;
 import com.standard.resource.service.OAuthClientDetailsService;
 import com.standard.securityCommon.authentication.LoginSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2SsoProperties;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerTokenServicesConfiguration;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoRestTemplateFactory;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,24 +27,18 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
-//@Configuration
-//@EnableConfigurationProperties(OAuth2SsoProperties.class)
-//@Import({ResourceServerTokenServicesConfiguration.class})
+/*@Configuration
+@EnableConfigurationProperties(OAuth2SsoProperties.class)
+@Import({ResourceServerTokenServicesConfiguration.class})*/
 public class SsoConfiguration extends WebSecurityConfigurerAdapter {
-
-    @Autowired
-    private FilterSecurityInterceptor filterSecurityInterceptor;
     @Autowired
     private DefaultTokenServicesCover defaultTokenServicesCover;
-
+//    @Autowired
+//    private FilterSecurityInterceptor filterSecurityInterceptor;
     @Autowired
     private OAuth2SsoProperties ssoProperties;
     @Autowired
     private UserInfoRestTemplateFactory restTemplateFactory;
-    @Autowired
-    private TokenStoreCover tokenStoreCover;
-    @Autowired
-    private OAuthClientDetailsService oauthClientDetailsService;
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
@@ -56,7 +52,7 @@ public class SsoConfiguration extends WebSecurityConfigurerAdapter {
         //验证失败反回401 错误
         http.exceptionHandling() .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
         //  单点登录时filterSecurityInterceptor的方法及投票过滤拦截
-        http.addFilterBefore(filterSecurityInterceptor, FilterSecurityInterceptor.class);
+      // http.addFilterBefore(filterSecurityInterceptor, FilterSecurityInterceptor.class);
         //此security使用在outheclient 的配置上
         http.apply(new OAuth2ClientAuthenticationConfigurer(oauth2SsoFilter()));
     }
@@ -86,14 +82,6 @@ public class SsoConfiguration extends WebSecurityConfigurerAdapter {
         return new LoginSuccessHandler();
     }
 
-    @Bean
-    public OAuth2AuthenticationManager oAuth2AuthenticationManager(@Autowired  DefaultTokenServicesCover tokenServices){
-        OAuth2AuthenticationManager oAuth2AuthenticationManager =new OAuth2AuthenticationManager();
-        oAuth2AuthenticationManager.setClientDetailsService(oauthClientDetailsService);
-        oAuth2AuthenticationManager.setTokenServices(tokenServices);
-        oAuth2AuthenticationManager.setResourceId(ConstParam.RESOURCE_ID);
-        return oAuth2AuthenticationManager;
-    }
 
     // 这配置覆盖
     private static class OAuth2ClientAuthenticationConfigurer
@@ -110,6 +98,5 @@ public class SsoConfiguration extends WebSecurityConfigurerAdapter {
             ssoFilter.setSessionAuthenticationStrategy(builder.getSharedObject(SessionAuthenticationStrategy.class));
             builder.addFilterAfter(ssoFilter,AbstractPreAuthenticatedProcessingFilter.class);
         }
-
     }
 }

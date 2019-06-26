@@ -9,13 +9,13 @@ import javax.persistence.*;
 
 @Getter
 @Setter
-@Entity
 @IsCreate
+@Entity
 @Table(name = "client_scope_")
 public class ClientScope extends BaseEntity {
-    private static final long serialVersionUID = 9084222588280252484L;
+    private static final long serialVersionUID = 2610056415677784888L;
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_")
     private Long id;
 

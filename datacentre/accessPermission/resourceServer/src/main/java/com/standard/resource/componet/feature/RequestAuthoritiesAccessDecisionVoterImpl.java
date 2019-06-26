@@ -39,7 +39,7 @@ public class RequestAuthoritiesAccessDecisionVoterImpl implements RequestAuthori
     @Override
     public int vote(Authentication authentication, FilterInvocation object, Collection<ConfigAttribute> attributes) {
             if (attributes.isEmpty()){
-                return ACCESS_GRANTED;
+                return ACCESS_ABSTAIN;
             }else {
                String userName =getUserName(authentication);
                OAthUserDetailes oAthUserDetailes = oAthUserDetailesService.findByUsername(userName);
