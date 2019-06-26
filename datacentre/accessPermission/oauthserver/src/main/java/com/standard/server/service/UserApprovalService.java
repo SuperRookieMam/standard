@@ -1,7 +1,7 @@
 package com.standard.server.service;
 
 import com.standard.base.service.BaseService;
-import com.standard.server.entitiy.UserApproval;
+import com.standard.server.entity.UserApproval;
 import org.springframework.security.oauth2.provider.approval.ApprovalStore;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.standard.resource.dao;
 
 import com.standard.base.dao.BaseRepository;
-import com.standard.resource.entitiy.OAthUserDetailes;
+import com.standard.resource.entity.OAthUserDetailes;
 import org.springframework.stereotype.Repository;
 
 @Repository

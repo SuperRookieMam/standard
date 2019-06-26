@@ -3,7 +3,7 @@ package com.standard.server.service.impl;
 import com.standard.base.service.impl.BaseServiceImpl;
 import com.standard.orm.componet.feature.DynamicDelete;
 import com.standard.orm.componet.feature.DynamicTypeSelect;
-import com.standard.server.entitiy.OAuthRefreshToken;
+import com.standard.server.entity.OAuthRefreshToken;
 import com.standard.server.service.OAuthRefreshTokenService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

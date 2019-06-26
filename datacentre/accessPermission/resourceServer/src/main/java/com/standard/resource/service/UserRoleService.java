@@ -1,7 +1,7 @@
 package com.standard.resource.service;
 
 import com.standard.base.service.BaseService;
-import com.standard.resource.entitiy.UserRole;
+import com.standard.resource.entity.UserRole;
 
 import java.util.List;
 

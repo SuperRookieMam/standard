@@ -2,7 +2,7 @@ package com.standard.resource.service.impl;
 
 import com.standard.base.service.impl.BaseServiceImpl;
 import com.standard.orm.componet.feature.DynamicTypeSelect;
-import com.standard.resource.entitiy.UserApproval;
+import com.standard.resource.entity.UserApproval;
 import com.standard.resource.service.UserApprovalService;
 import org.springframework.security.oauth2.provider.approval.Approval;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,7 @@
 package com.standard.server.dao;
 
 import com.standard.base.dao.BaseRepository;
-import com.standard.server.entitiy.AuthorizedGrantType;
+import com.standard.server.entity.AuthorizedGrantType;
 import org.springframework.stereotype.Repository;
 
 @Repository

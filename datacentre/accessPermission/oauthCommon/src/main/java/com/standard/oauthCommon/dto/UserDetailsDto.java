@@ -1,6 +1,5 @@
 package com.standard.oauthCommon.dto;
 
-import com.standard.oauthCommon.entity.MUserDetails;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,20 +32,6 @@ public class UserDetailsDto implements UserDetails {
     private String credentials;
 
     private boolean enabled;
-
-    public static<T extends MUserDetails> UserDetailsDto toDto(T mUserDetails){
-        UserDetailsDto userDetailsDto =new UserDetailsDto();
-        userDetailsDto.setId(mUserDetails.getId());
-        userDetailsDto.setUsername(mUserDetails.getUsername());
-        userDetailsDto.setPassword(mUserDetails.getPassword());
-        userDetailsDto.setHeadImage(mUserDetails.getHeadImage());
-        userDetailsDto.setAuthorities(mUserDetails.getAuthorities());
-        userDetailsDto.setExpired(mUserDetails.isExpired());
-        userDetailsDto.setLock(mUserDetails.isLock());
-        userDetailsDto.setCredentials(mUserDetails.getCredentials());
-        userDetailsDto.setEnabled(mUserDetails.isEnabled());
-        return  userDetailsDto;
-    }
     @Override
     public boolean isAccountNonExpired() {
         return expired;

@@ -1,6 +1,5 @@
 package com.standard.oauthCommon.dto;
 
-import com.standard.oauthCommon.entity.MClientDetails;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -39,23 +38,6 @@ public class ClientDetailsDto implements Serializable,ClientDetails {
     private Map<String, Object> additionalInformation;
 
     private Collection<GrantedAuthority> authorities;
-
-    public static<T extends MClientDetails> ClientDetailsDto toDto(T clientDetails ){
-        ClientDetailsDto clientDetailsDto =  new ClientDetailsDto();
-        clientDetailsDto.setClientId(clientDetails.getClientId());
-        clientDetailsDto.setResourceIds(clientDetails.getResourceIds());
-        clientDetailsDto.setSecretRequired(clientDetails.isSecretRequired());
-        clientDetailsDto.setClientSecret(clientDetails.getClientSecret());
-        clientDetailsDto.setScope(clientDetails.getScope());
-        clientDetailsDto.setAuthorizedGrantTypes(clientDetails.getAuthorizedGrantTypes());
-        clientDetailsDto.setRegisteredRedirectUri(clientDetails.getRegisteredRedirectUri());
-        clientDetailsDto.setAccessTokenValiditySeconds(clientDetails.getAccessTokenValiditySeconds());
-        clientDetailsDto.setRefreshTokenValiditySeconds(clientDetails.getRefreshTokenValiditySeconds());
-        clientDetailsDto.setAutoApprove(clientDetails.isAutoApprove(""));
-        clientDetailsDto.setAdditionalInformation(clientDetails.getAdditionalInformation());
-        clientDetailsDto.setAuthorities(clientDetails.getAuthorities());
-        return clientDetailsDto;
-    }
 
     @Override
     public boolean isScoped() {

@@ -1,6 +1,6 @@
 package com.standard.resource.componet.init;
 
-import com.standard.resource.entitiy.*;
+import com.standard.resource.entity.*;
 import com.standard.resource.service.*;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 @Service
 @Conditional(InitCondition.class)
 public class InitTable  implements InitializingBean {
@@ -68,7 +67,6 @@ public class InitTable  implements InitializingBean {
         OauthClientDetails clientDetails =new OauthClientDetails();
         clientDetails.setAccessTokenValiditySeconds(60000);
         clientDetails.setAutoApprove(true);
-        clientDetails.setClientId("zuul");
         clientDetails.setClientSecret("$2a$10$hjI6o5xdOxaxGnqNaFzwwOUnXEvUOAASQMKXPNZ5W9o18skQBwcS6");
         clientDetails.setRefreshTokenValiditySeconds(60000);
         clientDetails.setSecretRequired(true);
@@ -82,7 +80,7 @@ public class InitTable  implements InitializingBean {
         resourceServerService.insertByEntity(resourceServer);
 
         ResourceServerClient resourceServerClient =new ResourceServerClient();
-        resourceServerClient.setClientId("zuul");
+        resourceServerClient.setClientId(clientDetails.getClientId());
         resourceServerClient.setResourceId(resourceServer.getId());
         resourceServerClientService.insertByEntity(resourceServerClient);
 
@@ -97,17 +95,17 @@ public class InitTable  implements InitializingBean {
         oAthGrantedAuthorityService.insertByEntity(oAthGrantedAuthority);
 
         AuthorizedGrantType authorizedGrantType =new AuthorizedGrantType();
-        authorizedGrantType.setClientId("zuul");
+        authorizedGrantType.setClientId(clientDetails.getClientId());
         authorizedGrantType.setGrantType("authorization_code");
         authorizedGrantTypeService.insertByEntity(authorizedGrantType);
 
         ClientRegisteredRedirectUri uri =new ClientRegisteredRedirectUri();
-        uri.setClientId("zuul");
+        uri.setClientId(clientDetails.getClientId());
         uri.setRedirectUri("http://localhost:8082");
         clientRegisteredRedirectUriService.insertByEntity(uri);
 
         ClientScope clientScope =new ClientScope();
-        clientScope.setClientId("zuul");
+        clientScope.setClientId(clientDetails.getClientId());
         clientScope.setScope("read");
         clientScope.setResourceId(resourceServer.getId());
         clientScopeService.insertByEntity(clientScope);

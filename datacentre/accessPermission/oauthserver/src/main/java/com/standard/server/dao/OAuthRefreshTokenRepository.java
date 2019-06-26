@@ -1,7 +1,7 @@
 package com.standard.server.dao;
 
 import com.standard.base.dao.BaseRepository;
-import com.standard.server.entitiy.OAuthRefreshToken;
+import com.standard.server.entity.OAuthRefreshToken;
 import org.springframework.stereotype.Repository;
 
 @Repository

@@ -1,7 +1,7 @@
 package com.standard.resource.service;
 
 import com.standard.base.service.BaseService;
-import com.standard.resource.entitiy.RoleInfo;
+import com.standard.resource.entity.RoleInfo;
 
 public interface RoleInfoService extends BaseService<RoleInfo, Long> {
 

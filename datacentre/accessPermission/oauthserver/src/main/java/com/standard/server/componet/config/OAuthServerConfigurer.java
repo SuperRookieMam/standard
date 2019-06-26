@@ -9,6 +9,7 @@ import com.standard.server.service.UserApprovalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -19,7 +20,6 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.approval.ApprovalStoreUserApprovalHandler;
 import org.springframework.security.oauth2.provider.approval.UserApprovalHandler;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationManager;
 import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
 
 @Configuration
@@ -72,7 +72,7 @@ public class OAuthServerConfigurer extends AuthorizationServerConfigurerAdapter 
         DefaultTokenServicesCover defaultTokenServicesCover =getTokenService();
         endpoints.tokenServices(defaultTokenServicesCover);
         endpoints.userApprovalHandler(userApprovalHandler());
-        endpoints.authenticationManager(oAuth2AuthenticationManager(defaultTokenServicesCover));
+    //    endpoints.authenticationManager(oAuth2AuthenticationManager(defaultTokenServicesCover));
         endpoints.reuseRefreshTokens(true);
         // 如果要使用RefreshToken可用，必须指定UserDetailsService
         endpoints.userDetailsService(oAthUserDetailesService);
@@ -85,23 +85,24 @@ public class OAuthServerConfigurer extends AuthorizationServerConfigurerAdapter 
         return new BCryptPasswordEncoder();
     }
     @Bean
+    @Primary
     public DefaultTokenServicesCover getTokenService(){
         DefaultTokenServicesCover tokenServices =new DefaultTokenServicesCover();
         tokenServices.setTokenStore(tokenStore);
         tokenServices.setClientDetailsService(oauthClientDetailsService);
         tokenServices.setSupportRefreshToken(true);
         tokenServices.setReuseRefreshToken(true);
-        tokenServices.setAuthenticationManager(oAuth2AuthenticationManager(tokenServices));
+        //tokenServices.setAuthenticationManager(oAuth2AuthenticationManager(tokenServices));
         return tokenServices;
     }
-    @Bean
-    public OAuth2AuthenticationManager oAuth2AuthenticationManager(DefaultTokenServicesCover tokenServices){
-        OAuth2AuthenticationManager oAuth2AuthenticationManager =new OAuth2AuthenticationManager();
-        oAuth2AuthenticationManager.setClientDetailsService(oauthClientDetailsService);
-        oAuth2AuthenticationManager.setTokenServices(tokenServices);
-        oAuth2AuthenticationManager.setResourceId("1");
-        return oAuth2AuthenticationManager;
-    }
+//    @Bean
+//    public OAuth2AuthenticationManager oAuth2AuthenticationManager(DefaultTokenServicesCover tokenServices){
+//        OAuth2AuthenticationManager oAuth2AuthenticationManager =new OAuth2AuthenticationManager();
+//        oAuth2AuthenticationManager.setClientDetailsService(oauthClientDetailsService);
+//        oAuth2AuthenticationManager.setTokenServices(tokenServices);
+//        oAuth2AuthenticationManager.setResourceId("1");
+//        return oAuth2AuthenticationManager;
+//    }
 
     @Bean
     public UserApprovalHandler userApprovalHandler() {

@@ -3,18 +3,19 @@ package com.standard.resource.componet.feature;
 import com.standard.oauthCommon.dto.AccessTokenDto;
 import com.standard.oauthCommon.dto.RefreshTokenDto;
 import com.standard.oauthCommon.utils.SerializationUtils;
-import com.standard.resource.entitiy.OAuthAccessToken;
-import com.standard.resource.entitiy.OAuthRefreshToken;
+import com.standard.resource.cover.OAuthAccessTokenCover;
+import com.standard.resource.cover.RefreshTokenCover;
+import com.standard.resource.entity.OAuthAccessToken;
+import com.standard.resource.entity.OAuthRefreshToken;
 import com.standard.resource.service.OAuthAccessTokenService;
 import com.standard.resource.service.OAuthRefreshTokenService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Setter;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.AuthenticationKeyGenerator;
 import org.springframework.security.oauth2.provider.token.DefaultAuthenticationKeyGenerator;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
@@ -23,11 +24,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-@Component
+@Setter
 public class TokenStoreCover implements TokenStore {
-    @Autowired
+
     private OAuthAccessTokenService oAuthAccessTokenService;
-    @Autowired
+
     private OAuthRefreshTokenService refreshTokenService;
 
     private AuthenticationKeyGenerator authenticationKeyGenerator = new DefaultAuthenticationKeyGenerator();
@@ -51,9 +52,10 @@ public class TokenStoreCover implements TokenStore {
         String authenticationId =authenticationKeyGenerator.extractKey(authentication);
         // 为保证 token的一直性，这里还是删除一下的好
         if (!ObjectUtils.isEmpty(accessToken)){
+            AccessTokenDto dto = OAuthAccessTokenCover.toDto(accessToken);
             oAuthAccessTokenService.deletById(token.getValue());
             //    这里反序列化出来就是refreshTokendto
-            OAuth2RefreshToken refreshToken = accessToken.getRefreshToken();
+            OAuth2RefreshToken refreshToken = dto.getRefreshToken();
             if (!ObjectUtils.isEmpty(refreshToken)){
                 refreshTokenService.deleteByTokenId(refreshToken.getValue());
             }
@@ -76,7 +78,8 @@ public class TokenStoreCover implements TokenStore {
 
     @Override
     public OAuth2AccessToken readAccessToken(String tokenValue) {
-        return oAuthAccessTokenService.findById(tokenValue);
+        OAuthAccessToken authAccessToken =  oAuthAccessTokenService.findById(tokenValue);
+        return authAccessToken==null?null:OAuthAccessTokenCover.toDto(authAccessToken);
     }
 
     @Override
@@ -102,7 +105,7 @@ public class TokenStoreCover implements TokenStore {
     @Override
     public OAuth2RefreshToken readRefreshToken(String tokenValue) {
       List<OAuthRefreshToken> list =  refreshTokenService.findByTokenId(tokenValue);
-        return list.isEmpty()?null:RefreshTokenDto.toDto(list.get(0));
+        return list.isEmpty()?null: RefreshTokenCover.toDto(list.get(0));
     }
 
     @Override
@@ -131,7 +134,7 @@ public class TokenStoreCover implements TokenStore {
         String authenticationId =authenticationKeyGenerator.extractKey(authentication);
         OAuthAccessToken oAuthAccessToken =oAuthAccessTokenService.findByAuthenticationId(authenticationId);
         if (!ObjectUtils.isEmpty(oAuthAccessToken))
-                return AccessTokenDto.toDto(oAuthAccessToken);
+                return OAuthAccessTokenCover.toDto(oAuthAccessToken);
         return null;
     }
 
@@ -139,7 +142,7 @@ public class TokenStoreCover implements TokenStore {
     public Collection<OAuth2AccessToken> findTokensByClientIdAndUserName(String clientId, String userName) {
         return oAuthAccessTokenService.findByClientAndUername(clientId,userName)
                                          .stream()
-                                         .map(ele-> (OAuth2AccessToken)AccessTokenDto.toDto(ele))
+                                         .map(ele-> OAuthAccessTokenCover.toDto(ele))
                                          .collect(Collectors.toList());
     }
 
@@ -147,7 +150,7 @@ public class TokenStoreCover implements TokenStore {
     public Collection<OAuth2AccessToken> findTokensByClientId(String clientId) {
         return oAuthAccessTokenService.findByClient(clientId)
                 .stream()
-                .map(ele-> (OAuth2AccessToken)AccessTokenDto.toDto(ele))
+                .map(ele-> OAuthAccessTokenCover.toDto(ele))
                 .collect(Collectors.toList());
     }
 }

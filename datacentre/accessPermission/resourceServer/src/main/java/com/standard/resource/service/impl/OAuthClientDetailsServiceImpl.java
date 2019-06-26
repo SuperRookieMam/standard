@@ -1,8 +1,8 @@
 package com.standard.resource.service.impl;
 
 import com.standard.base.service.impl.BaseServiceImpl;
-import com.standard.oauthCommon.dto.ClientDetailsDto;
-import com.standard.resource.entitiy.OauthClientDetails;
+import com.standard.resource.cover.ClientDetailsCover;
+import com.standard.resource.entity.OauthClientDetails;
 import com.standard.resource.service.OAuthClientDetailsService;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientRegistrationException;
@@ -17,6 +17,6 @@ public class OAuthClientDetailsServiceImpl extends BaseServiceImpl<OauthClientDe
         if (ObjectUtils.isEmpty(oauthClientDetails)){
             throw new ClientRegistrationException("请先注册客户端到资源服务器.......");
         }
-        return ClientDetailsDto.toDto(oauthClientDetails);
+        return ClientDetailsCover.toDto(oauthClientDetails);
     }
 }

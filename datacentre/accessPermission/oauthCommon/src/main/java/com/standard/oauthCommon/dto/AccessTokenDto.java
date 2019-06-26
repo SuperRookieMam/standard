@@ -1,6 +1,5 @@
 package com.standard.oauthCommon.dto;
 
-import com.standard.oauthCommon.entity.MOAuthAccessToken;
 import com.standard.oauthCommon.utils.SerializationUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,22 +37,6 @@ public class AccessTokenDto implements OAuth2AccessToken ,Serializable{
     private String userName;
 
     private Map<String,Object> additionalInformation;
-
-    public static<T extends MOAuthAccessToken> AccessTokenDto toDto(T accesstoken){
-        AccessTokenDto accessTokenDto =new AccessTokenDto();
-        accessTokenDto.setTokenId(accesstoken.getTokenId());
-        accessTokenDto.setToken(accesstoken.getToken());
-        accessTokenDto.setAuthenticationId(accesstoken.getAuthenticationId());
-        accessTokenDto.setAuthentication(accesstoken.getAuthentication());
-        accessTokenDto.setClientId(accesstoken.getClientId());
-        accessTokenDto.setRefreshToken(SerializationUtils.serialize(accesstoken.getRefreshToken()));
-        accessTokenDto.setTokenType(accesstoken.getTokenType());
-        accessTokenDto.setScope(accesstoken.getScope());
-        accessTokenDto.setExpiration(accesstoken.getExpiration());
-        accessTokenDto.setUserName(accesstoken.getUserName());
-        accessTokenDto.setAdditionalInformation(accesstoken.getAdditionalInformation());
-        return  accessTokenDto;
-    }
     @Override
     public OAuth2RefreshToken getRefreshToken() {
         RefreshTokenDto refreshTokenDto =null;

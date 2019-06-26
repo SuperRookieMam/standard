@@ -1,9 +1,9 @@
 package com.standard.resource.service.impl;
 
 import com.standard.base.service.impl.BaseServiceImpl;
-import com.standard.oauthCommon.dto.UserDetailsDto;
 import com.standard.orm.componet.feature.DynamicTypeSelect;
-import com.standard.resource.entitiy.OAthUserDetailes;
+import com.standard.resource.cover.UserDetailsCover;
+import com.standard.resource.entity.OAthUserDetailes;
 import com.standard.resource.service.OAthUserDetailesService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,7 +23,7 @@ public class OAthUserDetailesServiceImpl extends BaseServiceImpl<OAthUserDetaile
         if (ObjectUtils.isEmpty(oAthUserDetailes)){
             throw new UsernameNotFoundException("用户不存在");
         }
-        return UserDetailsDto.toDto(oAthUserDetailes);
+        return UserDetailsCover.toDto(oAthUserDetailes);
     }
     @Override
     public OAthUserDetailes  findByUsername(String username){

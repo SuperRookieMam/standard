@@ -1,7 +1,7 @@
 package com.standard.resource.service;
 
 import com.standard.base.service.BaseService;
-import com.standard.resource.entitiy.OAthGrantedAuthority;
+import com.standard.resource.entity.OAthGrantedAuthority;
 
 import java.util.List;
 

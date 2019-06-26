@@ -1,19 +1,16 @@
 package com.standard.resource.componet.feature;
 
-import com.standard.resource.entitiy.OAthUserDetailes;
-import com.standard.resource.entitiy.UserRole;
+import com.standard.resource.entity.OAthUserDetailes;
+import com.standard.resource.entity.UserRole;
 import com.standard.resource.service.OAthUserDetailesService;
 import com.standard.resource.service.UserRoleService;
 import com.standard.securityCommon.access.RequestAuthoritiesAccessDecisionVoter;
 import com.standard.securityCommon.access.RequestAuthorityAttribute;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.FilterInvocation;
-import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
 import java.security.Principal;
@@ -22,11 +19,10 @@ import java.util.Iterator;
 import java.util.List;
 
 @Setter
-@Component
 public class RequestAuthoritiesAccessDecisionVoterImpl implements RequestAuthoritiesAccessDecisionVoter {
-    @Autowired
+
     private OAthUserDetailesService oAthUserDetailesService;
-    @Autowired
+
     private UserRoleService userRoleService;
     @Override
     public boolean supports(ConfigAttribute attribute) {
@@ -68,8 +64,8 @@ public class RequestAuthoritiesAccessDecisionVoterImpl implements RequestAuthori
 
     @Override
     public void afterPropertiesSet() throws Exception {
-       Assert.isNull(oAthUserDetailesService, "oAthUserDetailesService are required");
-       Assert.isNull(userRoleService, "userRoleService are required");
+       /*Assert.isNull(oAthUserDetailesService, "oAthUserDetailesService are required");
+       Assert.isNull(userRoleService, "userRoleService are required");*/
     }
 
     private String getUserName(Authentication authentication){

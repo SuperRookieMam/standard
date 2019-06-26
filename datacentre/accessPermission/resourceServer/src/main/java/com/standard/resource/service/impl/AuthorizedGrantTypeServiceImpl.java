@@ -1,7 +1,7 @@
 package com.standard.resource.service.impl;
 
 import com.standard.base.service.impl.BaseServiceImpl;
-import com.standard.resource.entitiy.AuthorizedGrantType;
+import com.standard.resource.entity.AuthorizedGrantType;
 import com.standard.resource.service.AuthorizedGrantTypeService;
 import org.springframework.stereotype.Service;
 

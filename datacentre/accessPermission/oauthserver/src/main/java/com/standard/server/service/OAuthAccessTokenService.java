@@ -1,7 +1,7 @@
 package com.standard.server.service;
 
 import com.standard.base.service.BaseService;
-import com.standard.server.entitiy.OAuthAccessToken;
+import com.standard.server.entity.OAuthAccessToken;
 
 import java.util.List;
 

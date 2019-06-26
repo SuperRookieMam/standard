@@ -1,7 +1,7 @@
 package com.standard.server.dao;
 
 import com.standard.base.dao.BaseRepository;
-import com.standard.server.entitiy.ClientRegisteredRedirectUri;
+import com.standard.server.entity.ClientRegisteredRedirectUri;
 import org.springframework.stereotype.Repository;
 
 @Repository

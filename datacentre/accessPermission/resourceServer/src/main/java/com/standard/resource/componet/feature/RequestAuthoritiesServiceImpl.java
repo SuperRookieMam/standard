@@ -1,20 +1,18 @@
 package com.standard.resource.componet.feature;
 
 import com.standard.resource.componet.constpackage.ConstParam;
-import com.standard.resource.entitiy.OAthGrantedAuthority;
+import com.standard.resource.entity.OAthGrantedAuthority;
 import com.standard.resource.service.OAthGrantedAuthorityService;
 import com.standard.securityCommon.access.RequestAuthorityAttribute;
 import com.standard.securityCommon.provider.RequestAuthoritiesService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-@Component
+ @Setter
 public class RequestAuthoritiesServiceImpl implements RequestAuthoritiesService {
 
-    @Autowired
+
     private OAthGrantedAuthorityService oAthGrantedAuthorityService;
     /**
      * 查询出对应请求的权限设置

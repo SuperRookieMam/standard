@@ -2,7 +2,7 @@ package com.standard.resource.service.impl;
 
 import com.standard.base.service.impl.BaseServiceImpl;
 import com.standard.orm.componet.feature.DynamicTypeSelect;
-import com.standard.resource.entitiy.UserRole;
+import com.standard.resource.entity.UserRole;
 import com.standard.resource.service.UserRoleService;
 import org.springframework.stereotype.Service;
 

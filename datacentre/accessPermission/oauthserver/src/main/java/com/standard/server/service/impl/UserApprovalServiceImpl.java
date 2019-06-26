@@ -2,7 +2,7 @@ package com.standard.server.service.impl;
 
 import com.standard.base.service.impl.BaseServiceImpl;
 import com.standard.orm.componet.feature.DynamicTypeSelect;
-import com.standard.server.entitiy.UserApproval;
+import com.standard.server.entity.UserApproval;
 import com.standard.server.service.UserApprovalService;
 import org.springframework.security.oauth2.provider.approval.Approval;
 import org.springframework.stereotype.Service;
@@ -11,8 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 

@@ -1,6 +1,7 @@
 package com.standard.resource.componet.config;
 
 
+import com.standard.resource.componet.constpackage.ConstParam;
 import com.standard.resource.componet.feature.DefaultTokenServicesCover;
 import com.standard.resource.componet.feature.TokenStoreCover;
 import com.standard.resource.service.OAuthClientDetailsService;
@@ -40,8 +41,6 @@ public class SsoConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private OAuth2SsoProperties ssoProperties;
-     //Factory used to create the {@link OAuth2RestTemplate}
-    // used for extracting user info during authentication if none is available.
     @Autowired
     private UserInfoRestTemplateFactory restTemplateFactory;
     @Autowired
@@ -51,6 +50,7 @@ public class SsoConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
+        super.configure(http);
         //  认定所有的资源都是受保护的,都需要验证通过
          http.antMatcher("/**").authorizeRequests().anyRequest().authenticated();
          // 关闭网页sable认证
@@ -89,26 +89,13 @@ public class SsoConfiguration extends WebSecurityConfigurerAdapter {
     private AuthenticationSuccessHandler loginSuccessHandler() {
         return new LoginSuccessHandler();
     }
-    /**
-     * 指定解码Token信息的解码器
-     */
-//    @PostConstruct
-    @Bean
-    public DefaultTokenServicesCover config() {
-        defaultTokenServicesCover = new DefaultTokenServicesCover();
-        defaultTokenServicesCover.setTokenStore(tokenStoreCover);
-        defaultTokenServicesCover.setClientDetailsService(oauthClientDetailsService);
-        defaultTokenServicesCover.setSupportRefreshToken(true);
-        defaultTokenServicesCover.setReuseRefreshToken(true);
-        defaultTokenServicesCover.setAuthenticationManager(oAuth2AuthenticationManager(defaultTokenServicesCover));
-        return defaultTokenServicesCover;
-    }
+
     @Bean
     public OAuth2AuthenticationManager oAuth2AuthenticationManager(@Autowired  DefaultTokenServicesCover tokenServices){
         OAuth2AuthenticationManager oAuth2AuthenticationManager =new OAuth2AuthenticationManager();
         oAuth2AuthenticationManager.setClientDetailsService(oauthClientDetailsService);
         oAuth2AuthenticationManager.setTokenServices(tokenServices);
-        oAuth2AuthenticationManager.setResourceId("1");
+        oAuth2AuthenticationManager.setResourceId(ConstParam.RESOURCE_ID);
         return oAuth2AuthenticationManager;
     }
 
@@ -129,14 +116,4 @@ public class SsoConfiguration extends WebSecurityConfigurerAdapter {
         }
 
     }
-
-    /**
-     * 指定一个用户信息解码器，
-     * 将从服务器获取过来的用户信息解码为本地
-     * 不需要这个只指定romotetokenservice的时候才需要怎么指定user的信息模板
-     */
-   /* @Bean
-    public PrincipalExtractor principalExtractor() {
-        return new UserDetailsDtoPrincipalExtractor();
-    }*/
 }
