@@ -90,7 +90,7 @@ public class InitTable  implements InitializingBean {
         oAthGrantedAuthority.setApiUri("/oauht/tokenGet");
         oAthGrantedAuthority.setMethod(HttpMethod.GET);
         oAthGrantedAuthority.setRoleId(userRole.getRoleId()+"");
-        oAthGrantedAuthority.setMactherType("url");
+        oAthGrantedAuthority.setMactherType("path");
         oAthGrantedAuthority.setResourceId(resourceServer.getId());
         oAthGrantedAuthorityService.insertByEntity(oAthGrantedAuthority);
 

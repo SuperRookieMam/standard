@@ -8,12 +8,8 @@ import com.standard.resource.service.OAuthClientDetailsService;
 import com.standard.securityCommon.authentication.LoginSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2SsoProperties;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerTokenServicesConfiguration;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoRestTemplateFactory;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,9 +25,9 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
-@Configuration
-@EnableConfigurationProperties(OAuth2SsoProperties.class)
-@Import({ResourceServerTokenServicesConfiguration.class})
+//@Configuration
+//@EnableConfigurationProperties(OAuth2SsoProperties.class)
+//@Import({ResourceServerTokenServicesConfiguration.class})
 public class SsoConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired

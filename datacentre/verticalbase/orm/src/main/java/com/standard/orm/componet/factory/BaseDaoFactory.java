@@ -103,7 +103,6 @@ public class BaseDaoFactory  extends JpaRepositoryFactory {
              String regix =File.separator.equals("\\")?"\\\\":"/";
              className = className.replaceAll(regix,".");
              className =className.substring(0,className.lastIndexOf("."));
-             System.out.println(className);
              Class tclass = Class.forName(className);
              if (tclass.isInterface()&&MyJpaBaseRepository.class.isAssignableFrom(tclass)){
                  interfaceList.add(tclass);

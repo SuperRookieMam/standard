@@ -11,7 +11,6 @@ import com.standard.securityCommon.access.RequestAuthoritiesFilterInvocationSecu
 import com.standard.securityCommon.provider.RequestAuthoritiesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDecisionVoter;
@@ -33,7 +32,6 @@ import java.util.Collections;
 import java.util.List;
 
 /*资源服务器*/
-@Configuration
 @EnableResourceServer
 @EnableWebSecurity
 public class ResourceConfigure extends ResourceServerConfigurerAdapter {
@@ -57,10 +55,12 @@ public class ResourceConfigure extends ResourceServerConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         // 指定所有的资源都要被保护
         super.configure(http);
+        http.antMatcher("/**");
         // 增加自定义的资源授权过滤器
-        http.addFilterBefore(interceptor(), FilterSecurityInterceptor.class);
-        // 判断请求是什么类型的token
-        http.requestMatcher(new BearerTokenRequestMatcher());
+       http.addFilterBefore(interceptor(), FilterSecurityInterceptor.class);
+        // 认定那些时资源？
+       // http.requestMatcher(new BearerTokenRequestMatcher());
+
     }
     /**
      * 投票器初始化
@@ -124,7 +124,7 @@ public class ResourceConfigure extends ResourceServerConfigurerAdapter {
         oAuth2AuthenticationManager.setClientDetailsService(oAuthClientDetailsService);
         oAuth2AuthenticationManager.setResourceId(ConstParam.RESOURCE_ID);
         oAuth2AuthenticationManager.setTokenServices(defaultTokenServicesCover);
-        return null;
+        return oAuth2AuthenticationManager;
     }
     @Bean
     public TokenStoreCover getTokenStor(){
