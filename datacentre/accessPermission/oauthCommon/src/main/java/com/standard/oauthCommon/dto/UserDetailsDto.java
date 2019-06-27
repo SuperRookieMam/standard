@@ -34,7 +34,7 @@ public class UserDetailsDto implements UserDetails {
     private boolean enabled;
     @Override
     public boolean isAccountNonExpired() {
-        return expired;
+        return !expired;
     }
 
     @Override
