@@ -15,7 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 //全局开启方法权限控制
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@Order(98)
+@Order(2)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -30,7 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated()
              .and()
                 .authorizeRequests()
-                .antMatchers("/static/**","/oauth/**")//静态资源可请建一个sttatic的文件加，我这下面的请求将被允许
+                .antMatchers("/static/**")//静态资源可请建一个sttatic的文件加，我这下面的请求将被允许
                 .permitAll()
              .and()
                 .formLogin()
