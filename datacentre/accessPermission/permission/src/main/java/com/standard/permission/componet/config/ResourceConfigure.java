@@ -46,17 +46,17 @@ public class ResourceConfigure extends ResourceServerConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         // 指定所有的资源都要被保护
       //  super.configure(http);
-      http.antMatcher("/**")
+      http.authorizeRequests()
+              .antMatchers("/static/**","/oauth/**")//静态资源可请建一个sttatic的文件加，我这下面的请求将被允许
+              .permitAll()
+          .and()
+              .antMatcher("/**")
               .authorizeRequests()
               .anyRequest()
               .authenticated()
-          .and()
+              .and()
               .formLogin()
               .loginProcessingUrl("/login")
-              .permitAll()
-          .and()
-              .authorizeRequests()
-              .antMatchers("/static/**","/oauth/**")//静态资源可请建一个sttatic的文件加，我这下面的请求将被允许
               .permitAll()
           .and()
               .addFilterBefore(interceptor(),FilterSecurityInterceptor.class);

@@ -2,6 +2,7 @@ package com.standard.permission.componet.config;
 
 import com.standard.permission.service.OAthUserDetailesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,23 +15,26 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 //全局开启方法权限控制
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Order(98)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private OAthUserDetailesService oAthUserDetailesService;
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.formLogin()
-                .loginProcessingUrl("/login")
-                .permitAll()
+        http.requestMatchers()
+                .antMatchers("/oauth/**", "/login/**", "/logout/**")
+                .and()
+                .authorizeRequests()
+                .antMatchers("/oauth/**")
+                .authenticated()
              .and()
                 .authorizeRequests()
                 .antMatchers("/static/**","/oauth/**")//静态资源可请建一个sttatic的文件加，我这下面的请求将被允许
                 .permitAll()
              .and()
-                .authorizeRequests()
-                .anyRequest()// 所有请求将被拦截验证
-                .authenticated()
+                .formLogin()
+                .permitAll()
              .and()
                 .csrf()//关闭网页跨域验证
                 .disable();
