@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.Transient;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -23,7 +24,7 @@ public class UserDetailsDto implements UserDetails {
 
     // 用户的权限
     @Transient// 不建表，动态获取
-    private List<? extends GrantedAuthority> authorities;
+    private List<? extends GrantedAuthority> authorities =new ArrayList<>();
 
     private boolean expired;
 

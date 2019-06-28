@@ -7,9 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 在项目中,主要操作oauth_access_token表的对象是JdbcTokenStore.java. 更多的细节请参考该类.
@@ -58,6 +56,7 @@ public class OAuthAccessToken extends BaseEntity  {
     /**
      * 该字段的值是将refresh_token的值通过MD5加密后存储的.
      */
+    @Lob
     @Column(name = "refresh_token_")
     private String refreshToken;
 
@@ -66,7 +65,7 @@ public class OAuthAccessToken extends BaseEntity  {
 
     /*@Column(name = "scope_")*/
     @Transient
-    private Set<String> scope;
+    private Set<String> scope= Collections.emptySet();
 
     @Column(name = "expiration_")
     private Date expiration;

@@ -58,6 +58,7 @@ public class OAuthAccessToken extends BaseEntity {
     /**
      * 该字段的值是将refresh_token的值通过MD5加密后存储的.
      */
+    @Lob
     @Column(name = "refresh_token_")
     private String refreshToken;
 

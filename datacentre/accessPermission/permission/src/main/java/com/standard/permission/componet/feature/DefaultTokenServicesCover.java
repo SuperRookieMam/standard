@@ -1,10 +1,15 @@
 package com.standard.permission.componet.feature;
 
+import com.standard.oauthCommon.dto.AccessTokenDto;
+import com.standard.oauthCommon.dto.RefreshTokenDto;
+import com.standard.oauthCommon.utils.SerializationUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.oauth2.common.*;
+import org.springframework.security.oauth2.common.ExpiringOAuth2RefreshToken;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
@@ -38,6 +43,8 @@ public class DefaultTokenServicesCover implements AuthorizationServerTokenServic
     private TokenEnhancer accessTokenEnhancer;
 
     private AuthenticationManager authenticationManager;
+
+    private AuthenticationKeyGenerator authenticationKeyGenerator = new DefaultAuthenticationKeyGenerator();
 
     /**
      * Initialize these token services. If no random generator is set, one will be created.
@@ -248,25 +255,28 @@ public class DefaultTokenServicesCover implements AuthorizationServerTokenServic
         if (!isSupportRefreshToken(authentication.getOAuth2Request())) {
             return null;
         }
-        int validitySeconds = getRefreshTokenValiditySeconds(authentication.getOAuth2Request());
-        String value = UUID.randomUUID().toString();
-        if (validitySeconds > 0) {
-            return new DefaultExpiringOAuth2RefreshToken(value, new Date(System.currentTimeMillis()
-                    + (validitySeconds * 1000L)));
-        }
-        return new DefaultOAuth2RefreshToken(value);
+        RefreshTokenDto refreshTokenDto =new RefreshTokenDto();
+        refreshTokenDto.setTokenId(authenticationKeyGenerator.extractKey(authentication));
+        refreshTokenDto.setAuthentication(SerializationUtils.serialize(authentication));
+        return refreshTokenDto;
     }
 
     private OAuth2AccessToken createAccessToken(OAuth2Authentication authentication, OAuth2RefreshToken refreshToken) {
-        DefaultOAuth2AccessToken token = new DefaultOAuth2AccessToken(UUID.randomUUID().toString());
+        AccessTokenDto accessTokenDto = new AccessTokenDto();
+        accessTokenDto.setAuthenticationId(authenticationKeyGenerator.extractKey(authentication));
+        accessTokenDto.setRefreshToken(SerializationUtils.serialize(refreshToken));
+        accessTokenDto.setAuthentication(SerializationUtils.serialize(authentication));
+        accessTokenDto.setClientId(authentication.getOAuth2Request().getClientId());
+        accessTokenDto.setTokenType(OAuth2AccessToken.BEARER_TYPE.toLowerCase());
+        accessTokenDto.setUserName(authentication.isClientOnly() ? null : authentication.getName());
         int validitySeconds = getAccessTokenValiditySeconds(authentication.getOAuth2Request());
         if (validitySeconds > 0) {
-            token.setExpiration(new Date(System.currentTimeMillis() + (validitySeconds * 1000L)));
+            accessTokenDto.setExpiration(new Date(System.currentTimeMillis() + (validitySeconds * 1000L)));
         }
-        token.setRefreshToken(refreshToken);
-        token.setScope(authentication.getOAuth2Request().getScope());
+        accessTokenDto.setTokenId(UUID.randomUUID().toString().replaceAll("-",""));
+        accessTokenDto.setScope(authentication.getOAuth2Request().getScope());
 
-        return accessTokenEnhancer != null ? accessTokenEnhancer.enhance(token, authentication) : token;
+        return accessTokenEnhancer != null ? accessTokenEnhancer.enhance(accessTokenDto, authentication) : accessTokenDto;
     }
 
     /**

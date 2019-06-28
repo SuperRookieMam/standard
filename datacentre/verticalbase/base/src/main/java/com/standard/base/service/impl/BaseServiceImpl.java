@@ -19,6 +19,7 @@ import javax.persistence.criteria.Predicate;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class BaseServiceImpl<T extends BaseEntity,ID extends Serializable> implements BaseService<T, ID> {
@@ -26,7 +27,8 @@ public class BaseServiceImpl<T extends BaseEntity,ID extends Serializable> imple
     private  BaseRepository<T,ID> baseRepository;
     @Override
     public T  findById(ID id) {
-        return baseRepository.findById(id).get();
+        Optional<T> optional= baseRepository.findById(id);
+        return optional.isPresent()?optional.get():null;
     }
     @Override
     public List<T> findByIds(Iterable<ID> iterable){

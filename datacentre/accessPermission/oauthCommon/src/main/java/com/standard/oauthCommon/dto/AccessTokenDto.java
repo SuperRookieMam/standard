@@ -7,9 +7,7 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -17,8 +15,6 @@ public class AccessTokenDto implements OAuth2AccessToken ,Serializable{
     private static final long serialVersionUID = 6426419878090803314L;
 
     private String tokenId;
-
-    private String token;
 
     private String authenticationId;
 
@@ -30,19 +26,22 @@ public class AccessTokenDto implements OAuth2AccessToken ,Serializable{
 
     private String tokenType;
 
-    private Set<String> scope;
+    private Set<String> scope=new HashSet<>();
 
     private Date expiration;
 
     private String userName;
 
-    private Map<String,Object> additionalInformation;
+    private Map<String,Object> additionalInformation=new HashMap<>();
     @Override
     public OAuth2RefreshToken getRefreshToken() {
         RefreshTokenDto refreshTokenDto =null;
         if (refreshToken!=null)
             refreshTokenDto = SerializationUtils.deserialize(refreshToken);
         return refreshTokenDto;
+    }
+    public String getRefreshTokenStr() {
+        return refreshToken;
     }
     @Override
     public boolean isExpired() {

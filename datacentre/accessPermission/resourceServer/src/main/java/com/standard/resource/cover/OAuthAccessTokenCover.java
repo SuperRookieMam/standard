@@ -10,7 +10,6 @@ public class OAuthAccessTokenCover  {
      public static AccessTokenDto toDto(OAuthAccessToken accesstoken){
           AccessTokenDto accessTokenDto =new AccessTokenDto();
           accessTokenDto.setTokenId(accesstoken.getTokenId());
-          accessTokenDto.setToken(accesstoken.getToken());
           accessTokenDto.setAuthenticationId(accesstoken.getAuthenticationId());
           accessTokenDto.setAuthentication(accesstoken.getAuthentication());
           accessTokenDto.setClientId(accesstoken.getClientId());
