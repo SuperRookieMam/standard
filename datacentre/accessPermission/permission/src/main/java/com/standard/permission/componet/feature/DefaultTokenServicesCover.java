@@ -18,6 +18,7 @@ import org.springframework.security.oauth2.provider.token.*;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 
 import java.util.Date;
 import java.util.Set;
@@ -262,9 +263,10 @@ public class DefaultTokenServicesCover implements AuthorizationServerTokenServic
     }
 
     private OAuth2AccessToken createAccessToken(OAuth2Authentication authentication, OAuth2RefreshToken refreshToken) {
+        RefreshTokenDto refreshTokenDto= ObjectUtils.isEmpty(refreshToken)?null:((RefreshTokenDto)refreshToken);
         AccessTokenDto accessTokenDto = new AccessTokenDto();
         accessTokenDto.setAuthenticationId(authenticationKeyGenerator.extractKey(authentication));
-        accessTokenDto.setRefreshToken(SerializationUtils.serialize(refreshToken));
+        accessTokenDto.setRefreshToken(SerializationUtils.serialize(refreshTokenDto));
         accessTokenDto.setAuthentication(SerializationUtils.serialize(authentication));
         accessTokenDto.setClientId(authentication.getOAuth2Request().getClientId());
         accessTokenDto.setTokenType(OAuth2AccessToken.BEARER_TYPE.toLowerCase());

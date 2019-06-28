@@ -35,6 +35,7 @@ public class OAuthRefreshToken extends BaseEntity {
     /**
      * 存储将OAuth2Authentication.java对象序列化后的二进制数据.
      */
+    @Lob
     @Column(name = "authentication_")
     private String authentication;
 

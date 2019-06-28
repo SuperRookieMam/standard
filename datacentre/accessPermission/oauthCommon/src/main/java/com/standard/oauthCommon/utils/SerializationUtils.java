@@ -1,5 +1,6 @@
 package com.standard.oauthCommon.utils;
 
+import com.alibaba.fastjson.JSON;
 import org.springframework.core.ConfigurableObjectInputStream;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -12,6 +13,7 @@ public class SerializationUtils {
     public static String serialize(Object state) {
         ObjectOutputStream oos = null;
         try {
+            JSON.toJSONString(state);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             oos = new ObjectOutputStream(bos);
             oos.writeObject(state);
@@ -24,7 +26,7 @@ public class SerializationUtils {
                 try {
                     oos.close();
                 } catch (IOException e) {
-                    // eat it
+                    e.printStackTrace();
                 }
             }
         }
@@ -49,7 +51,7 @@ public class SerializationUtils {
                 try {
                     oip.close();
                 } catch (IOException e) {
-                    // eat it
+                    e.printStackTrace();
                 }
             }
         }
