@@ -13,7 +13,7 @@ public class OAuthAccessTokenCover  {
           accessTokenDto.setAuthenticationId(accesstoken.getAuthenticationId());
           accessTokenDto.setAuthentication(accesstoken.getAuthentication());
           accessTokenDto.setClientId(accesstoken.getClientId());
-          accessTokenDto.setRefreshToken(SerializationUtils.serialize(accesstoken.getRefreshToken()));
+          accessTokenDto.setRefreshToken(accesstoken.getRefreshToken());
           accessTokenDto.setTokenType(accesstoken.getTokenType());
           accessTokenDto.setScope(accesstoken.getScope());
           accessTokenDto.setExpiration(accesstoken.getExpiration());

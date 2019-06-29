@@ -4,6 +4,7 @@ import com.standard.base.entity.BaseEntity;
 import com.standard.codecreate.feature.annotation.IsCreate;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
 import javax.persistence.*;
 
@@ -19,7 +20,7 @@ import javax.persistence.*;
 @Table(name = "oauth_refresh_token_",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"token_id_"})},
         indexes= {@Index(columnList = "token_id_")})
-public class OAuthRefreshToken extends BaseEntity  {
+public class OAuthRefreshToken extends BaseEntity {
     private static final long serialVersionUID = 9080251217485358480L;
 
     @Id
@@ -35,8 +36,9 @@ public class OAuthRefreshToken extends BaseEntity  {
     /**
      * 存储将OAuth2Authentication.java对象序列化后的二进制数据.
      */
+    @Lob
     @Column(name = "authentication_")
-    private String authentication;
+    private OAuth2Authentication authentication;
 
 
 }

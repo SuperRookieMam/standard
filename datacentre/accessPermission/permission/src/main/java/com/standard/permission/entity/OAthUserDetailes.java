@@ -46,7 +46,7 @@ public class OAthUserDetailes extends BaseEntity {
     @Column(name = "credentials_")
     private String credentials;
 
-    @Column(name = "is_enabled_")
+    @Column(name = "enabled_")
     private boolean enabled;
 
 }

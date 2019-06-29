@@ -1,11 +1,8 @@
 package com.standard.oauthCommon.utils;
 
-import com.alibaba.fastjson.JSON;
-import org.springframework.core.ConfigurableObjectInputStream;
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
-
 import java.io.*;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 public class SerializationUtils {
 
@@ -13,13 +10,14 @@ public class SerializationUtils {
     public static String serialize(Object state) {
         ObjectOutputStream oos = null;
         try {
-            JSON.toJSONString(state);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             oos = new ObjectOutputStream(bos);
             oos.writeObject(state);
             oos.flush();
-            return new BASE64Encoder().encode(bos.toByteArray());
-        } catch (IOException e) {
+            String serializeStr=bos.toString("ISO-8859-1");
+            serializeStr=URLEncoder.encode(serializeStr,"UTF-8");
+            return serializeStr;
+        } catch (Exception e) {
             throw new IllegalArgumentException(e);
         } finally {
             if (oos != null) {
@@ -33,15 +31,14 @@ public class SerializationUtils {
     }
 
     // 将base64反序列化为对象
-    public static <T> T deserialize(String base64) {
+    public static <T> T deserialize(String serializeStrEncoder) {
         ObjectInputStream oip = null;
         try {
-            byte[] buffer = new BASE64Decoder().decodeBuffer(base64);
-            oip = new ConfigurableObjectInputStream(new ByteArrayInputStream(buffer),
-                    Thread.currentThread().getContextClassLoader());
-            @SuppressWarnings("unchecked")
-            T result = (T) oip.readObject();
-            return result;
+            String serializeStr = URLDecoder.decode(serializeStrEncoder,"UTF-8");
+            byte[] bytes =serializeStr.getBytes("ISO-8859-1");
+            oip = new ObjectInputStream(new ByteArrayInputStream(bytes));
+            T obj =(T) oip.readObject();
+            return obj;
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         } catch (ClassNotFoundException e) {

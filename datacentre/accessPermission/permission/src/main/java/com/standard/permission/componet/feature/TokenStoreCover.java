@@ -19,8 +19,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -41,7 +40,7 @@ public class TokenStoreCover implements TokenStore {
     public OAuth2Authentication readAuthentication(String token) {
          OAuthAccessToken oAuthAccessToken = oAuthAccessTokenService.findById(token);
          if (!ObjectUtils.isEmpty(oAuthAccessToken))
-            return SerializationUtils.deserialize(oAuthAccessToken.getAuthentication());
+            return oAuthAccessToken.getAuthentication();
         return null;
     }
 
@@ -49,29 +48,33 @@ public class TokenStoreCover implements TokenStore {
     @Transactional(value = "jpaTransactionManager", rollbackFor = Exception.class)
     public void storeAccessToken(OAuth2AccessToken token, OAuth2Authentication authentication) {
         OAuthAccessToken  accessToken = oAuthAccessTokenService.findById(token.getValue());
+        AccessTokenDto dto =(AccessTokenDto)token;
         // 为保证 token的一直性，这里还是删除一下的好
         if (!ObjectUtils.isEmpty(accessToken)){
-            AccessTokenDto dto = OAuthAccessTokenCover.toDto(accessToken);
-            oAuthAccessTokenService.deletById(token.getValue());
-            //    这里反序列化出来就是refreshTokendto
-            OAuth2RefreshToken refreshToken = dto.getRefreshToken();
-            if (!ObjectUtils.isEmpty(refreshToken)){
-                refreshTokenService.deleteByTokenId(refreshToken.getValue());
-            }
-        }
-        AccessTokenDto dto =(AccessTokenDto)token;
-        OAuthAccessToken  oAuthAccessToken =new OAuthAccessToken();
-        oAuthAccessToken.setAuthenticationId(dto.getAuthenticationId());
-        oAuthAccessToken.setAuthentication(dto.getAuthentication());
-        oAuthAccessToken.setClientId(dto.getClientId());
+            accessToken.setAuthenticationId(dto.getAuthenticationId());
+            accessToken.setAuthentication(dto.getAuthentication());
+            accessToken.setClientId(dto.getClientId());
 //        这里序列化存的是 refreshTokendto
-        oAuthAccessToken.setRefreshToken(dto.getRefreshTokenStr());
-        oAuthAccessToken.setTokenType(OAuth2AccessToken.BEARER_TYPE.toLowerCase());
-        oAuthAccessToken.setScope(dto.getScope());
-        oAuthAccessToken.setUserName(dto.getUserName());
-        oAuthAccessToken.setExpiration(token.getExpiration());
-        oAuthAccessTokenService.insertByEntity(oAuthAccessToken);
-        dto.setTokenId(oAuthAccessToken.getTokenId());
+            accessToken.setRefreshToken(dto.getRefreshToken());
+            accessToken.setTokenType(OAuth2AccessToken.BEARER_TYPE.toLowerCase());
+            accessToken.setScope(dto.getScope());
+            accessToken.setUserName(dto.getUserName());
+            accessToken.setExpiration(token.getExpiration());
+            oAuthAccessTokenService.updateByEntity(accessToken);
+        }else {
+            accessToken =new OAuthAccessToken();
+            accessToken.setAuthenticationId(dto.getAuthenticationId());
+            accessToken.setAuthentication(dto.getAuthentication());
+            accessToken.setClientId(dto.getClientId());
+            //        这里序列化存的是 refreshTokendto
+            accessToken.setRefreshToken(dto.getRefreshToken());
+            accessToken.setTokenType(OAuth2AccessToken.BEARER_TYPE.toLowerCase());
+            accessToken.setScope(dto.getScope());
+            accessToken.setUserName(dto.getUserName());
+            accessToken.setExpiration(token.getExpiration());
+            oAuthAccessTokenService.insertByEntity(accessToken);
+        }
+        dto.setTokenId(accessToken.getTokenId());
     }
 
     @Override
@@ -92,12 +95,16 @@ public class TokenStoreCover implements TokenStore {
         RefreshTokenDto dto =(RefreshTokenDto)refreshToken;
         List<OAuthRefreshToken> list = refreshTokenService.findByTokenId(dto.getValue());
         if (!list.isEmpty()){
-            refreshTokenService.deleteByTokenId(dto.getValue());
+            OAuthRefreshToken oAuthRefreshToken =list.get(0);
+            oAuthRefreshToken.setAuthentication(dto.getAuthentication());
+            oAuthRefreshToken.setTokenId(dto.getValue());
+            refreshTokenService.updateByEntity(oAuthRefreshToken);
+        }else {
+            OAuthRefreshToken oAuthRefreshToken =new OAuthRefreshToken();
+            oAuthRefreshToken.setAuthentication(dto.getAuthentication());
+            oAuthRefreshToken.setTokenId(dto.getValue());
+            refreshTokenService.insertByEntity(oAuthRefreshToken);
         }
-        OAuthRefreshToken oAuthRefreshToken =new OAuthRefreshToken();
-        oAuthRefreshToken.setAuthentication(dto.getAuthentication());
-        oAuthRefreshToken.setTokenId(dto.getValue());
-        refreshTokenService.insertByEntity(oAuthRefreshToken);
     }
 
     @Override
@@ -110,7 +117,7 @@ public class TokenStoreCover implements TokenStore {
     public OAuth2Authentication readAuthenticationForRefreshToken(OAuth2RefreshToken token) {
         OAuth2RefreshToken refreshToken =  readRefreshToken(token.getValue());
         if(!ObjectUtils.isEmpty(refreshToken)){
-            return  SerializationUtils.deserialize (((RefreshTokenDto) refreshToken).getAuthentication()) ;
+            return  ((RefreshTokenDto) refreshToken).getAuthentication();
         }
         return null;
     }

@@ -2,9 +2,12 @@ package com.standard.permission.entity;
 
 import com.standard.base.entity.BaseEntity;
 import com.standard.codecreate.feature.annotation.IsCreate;
+import com.standard.oauthCommon.dto.AccessTokenDto;
+import com.standard.oauthCommon.dto.RefreshTokenDto;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
 import javax.persistence.*;
 import java.util.*;
@@ -34,7 +37,7 @@ public class OAuthAccessToken extends BaseEntity  {
      * */
     @Lob
     @Column(name = "token_")
-    private String token;
+    private AccessTokenDto token;
     /**
      * 该字段具有唯一性, 其值是根据当前的username(如果有),
      * client_id与scope通过MD5加密生成的.
@@ -47,7 +50,7 @@ public class OAuthAccessToken extends BaseEntity  {
      */
     @Lob
     @Column(name = "authentication_")
-    private String authentication;
+    private OAuth2Authentication authentication;
     /**
      *
      * */
@@ -58,7 +61,7 @@ public class OAuthAccessToken extends BaseEntity  {
      */
     @Lob
     @Column(name = "refresh_token_")
-    private String refreshToken;
+    private RefreshTokenDto refreshToken;
 
     @Column(name = "token_type_")
     private String tokenType;

@@ -3,6 +3,7 @@ package com.standard.permission.componet.feature;
 import com.standard.oauthCommon.dto.AccessTokenDto;
 import com.standard.oauthCommon.dto.RefreshTokenDto;
 import com.standard.oauthCommon.utils.SerializationUtils;
+import com.standard.permission.componet.constpackage.ConstParam;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -29,9 +30,9 @@ import java.util.UUID;
  * */
 public class DefaultTokenServicesCover implements AuthorizationServerTokenServices, ResourceServerTokenServices,
         ConsumerTokenServices, InitializingBean {
-    private int refreshTokenValiditySeconds = 60 * 60 * 24 * 30; // default 30 days.
+    private int refreshTokenValiditySeconds = ConstParam.TOKEN_REFRESH_SECONDS; // default 30 days.
 
-    private int accessTokenValiditySeconds = 60 * 60 * 12; // default 12 hours.
+    private int accessTokenValiditySeconds = ConstParam.TOKEN_LIVE_SECONDS; // default 12 hours.
 
     private boolean supportRefreshToken = false;
 
@@ -258,7 +259,7 @@ public class DefaultTokenServicesCover implements AuthorizationServerTokenServic
         }
         RefreshTokenDto refreshTokenDto =new RefreshTokenDto();
         refreshTokenDto.setTokenId(authenticationKeyGenerator.extractKey(authentication));
-        refreshTokenDto.setAuthentication(SerializationUtils.serialize(authentication));
+        refreshTokenDto.setAuthentication(authentication);
         return refreshTokenDto;
     }
 
@@ -266,8 +267,8 @@ public class DefaultTokenServicesCover implements AuthorizationServerTokenServic
         RefreshTokenDto refreshTokenDto= ObjectUtils.isEmpty(refreshToken)?null:((RefreshTokenDto)refreshToken);
         AccessTokenDto accessTokenDto = new AccessTokenDto();
         accessTokenDto.setAuthenticationId(authenticationKeyGenerator.extractKey(authentication));
-        accessTokenDto.setRefreshToken(SerializationUtils.serialize(refreshTokenDto));
-        accessTokenDto.setAuthentication(SerializationUtils.serialize(authentication));
+        accessTokenDto.setRefreshToken(refreshTokenDto);
+        accessTokenDto.setAuthentication(authentication);
         accessTokenDto.setClientId(authentication.getOAuth2Request().getClientId());
         accessTokenDto.setTokenType(OAuth2AccessToken.BEARER_TYPE.toLowerCase());
         accessTokenDto.setUserName(authentication.isClientOnly() ? null : authentication.getName());

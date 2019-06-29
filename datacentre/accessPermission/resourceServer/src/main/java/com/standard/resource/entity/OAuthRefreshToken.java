@@ -4,6 +4,7 @@ import com.standard.base.entity.BaseEntity;
 import com.standard.codecreate.feature.annotation.IsCreate;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
 import javax.persistence.*;
 
@@ -35,8 +36,9 @@ public class OAuthRefreshToken extends BaseEntity {
     /**
      * 存储将OAuth2Authentication.java对象序列化后的二进制数据.
      */
+    @Lob
     @Column(name = "authentication_")
-    private String authentication;
+    private OAuth2Authentication authentication;
 
 
 }

@@ -10,6 +10,7 @@ import com.standard.base.service.BaseService;
 import com.standard.orm.componet.feature.*;
 import com.standard.orm.componet.util.PathUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
@@ -68,14 +69,17 @@ public class BaseServiceImpl<T extends BaseEntity,ID extends Serializable> imple
         return  DynamicPageTypeSelect.getResult();
     }
     @Override
+    @Transactional(value = "jpaTransactionManager", rollbackFor = Exception.class)
     public T updateByEntity(T entity){
        return baseRepository.save(entity);
     }
     @Override
+    @Transactional(value = "jpaTransactionManager", rollbackFor = Exception.class)
     public List<T> updateByEntitys(Iterable<T> iterable){
        return baseRepository.saveAll(iterable);
     }
     @Override
+    @Transactional(value = "jpaTransactionManager", rollbackFor = Exception.class)
     public int updateByParams(DynamicParam dynamicParam){
         DynamicUpdate<T> dynamicUpdate = baseRepository.getDynamicUpdate();
         JSONObject jsonObject = dynamicParam.getUpdateFiled();
@@ -97,15 +101,18 @@ public class BaseServiceImpl<T extends BaseEntity,ID extends Serializable> imple
     }
 
     @Override
+    @Transactional(value = "jpaTransactionManager", rollbackFor = Exception.class)
     public void deletById(ID id){
         baseRepository.deleteById(id);
     }
 
     @Override
+    @Transactional(value = "jpaTransactionManager", rollbackFor = Exception.class)
     public void deletByEntitys(Iterable<T> entitys){
         baseRepository.deleteAll(entitys);
     }
     @Override
+    @Transactional(value = "jpaTransactionManager", rollbackFor = Exception.class)
     public int deletByParam(DynamicParam dynamicParam){
         DynamicDelete<T> dynamicDelete = baseRepository.getDynamicDelete();
         dynamicDelete.dynamicBuild(ele -> {
@@ -116,11 +123,13 @@ public class BaseServiceImpl<T extends BaseEntity,ID extends Serializable> imple
         return dynamicDelete.getResult();
     }
     @Override
+    @Transactional(value = "jpaTransactionManager", rollbackFor = Exception.class)
     public T insertByEntity(T entity){
         return baseRepository.save(entity);
     }
 
     @Override
+    @Transactional(value = "jpaTransactionManager", rollbackFor = Exception.class)
     public List<T> insertByEntitys(Iterable<T> entitys){
         return baseRepository.saveAll(entitys);
     }
