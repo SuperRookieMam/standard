@@ -15,7 +15,6 @@ public class LoginController {
     @ResponseBody
     @ApiOperation(value="登陆", notes="logIn")
     public ResultDto login(){
-        oAuthAccessTokenService.deletById("2c9eaf716ba1a106016ba1a1a2c20000");
         return ResultDto.success("允许登陆");
     }
 

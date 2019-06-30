@@ -9,6 +9,8 @@ import com.standard.permission.service.OAthUserDetailesService;
 import com.standard.permission.service.UserRoleService;
 import com.standard.securityCommon.access.RequestAuthoritiesAccessDecisionVoter;
 import com.standard.securityCommon.access.RequestAuthoritiesFilterInvocationSecurityMetadataSource;
+import com.standard.securityCommon.authentication.LoginFailureHandler;
+import com.standard.securityCommon.authentication.LoginSuccessHandler;
 import com.standard.securityCommon.provider.RequestAuthoritiesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
@@ -39,6 +41,10 @@ public class ResourceConfigure extends ResourceServerConfigurerAdapter {
     private DefaultTokenServicesCover defaultTokenServicesCover;
     @Autowired
     private OAthGrantedAuthorityService oAthGrantedAuthorityService;
+    @Autowired
+    private LoginSuccessHandler loginSuccessHandler;
+    @Autowired
+    private LoginFailureHandler loginFailureHandler;
     /**
      * 配置对资源的保护模式
      */
@@ -56,6 +62,8 @@ public class ResourceConfigure extends ResourceServerConfigurerAdapter {
               .authenticated()
               .and()
               .formLogin()
+               .successHandler(loginSuccessHandler)
+               .failureHandler(loginFailureHandler)
               .loginProcessingUrl("/login")
               .permitAll()
           .and()
