@@ -20,7 +20,6 @@ import java.util.*;
 @Entity
 @IsCreate
 @Table(name = "oauth_access_token_",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"authentication_id_"})},
         indexes = {@Index(columnList = "authentication_id_")})
 @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
 public class OAuthAccessToken extends BaseEntity  {

@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.auditing.AuditingHandler;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;

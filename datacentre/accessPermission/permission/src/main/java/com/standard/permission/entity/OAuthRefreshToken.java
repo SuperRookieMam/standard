@@ -18,7 +18,6 @@ import javax.persistence.*;
 @Entity
 @IsCreate
 @Table(name = "oauth_refresh_token_",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"token_id_"})},
         indexes= {@Index(columnList = "token_id_")})
 public class OAuthRefreshToken extends BaseEntity {
     private static final long serialVersionUID = 9080251217485358480L;
