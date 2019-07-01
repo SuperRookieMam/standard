@@ -53,7 +53,7 @@ public class ResourceConfigure extends ResourceServerConfigurerAdapter {
         // 指定所有的资源都要被保护
       //  super.configure(http);
       http.authorizeRequests()
-              .antMatchers("/static/**")//静态资源可请建一个sttatic的文件加，我这下面的请求将被允许
+              .antMatchers("/static/**","/Test/**")//静态资源可请建一个sttatic的文件加，我这下面的请求将被允许
               .permitAll()
           .and()
               .antMatcher("/**")

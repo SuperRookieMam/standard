@@ -2,6 +2,7 @@ package com.standard.permission.entity;
 
 import com.standard.base.entity.BaseEntity;
 import com.standard.codecreate.feature.annotation.IsCreate;
+import com.standard.permission.componet.constpackage.ConstParam;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -100,13 +101,13 @@ public class OauthClientDetails extends BaseEntity {
      * 设定客户端的access_token的有效时间值(单位:秒),可选, 若不设定值则使用默认的有效时间值(60 * 60 * 12, 12小时).
      */
     @Column(name = "access_token_validity_seconds_")
-    private Integer accessTokenValiditySeconds = 60 * 60 * 24*365;
+    private Integer accessTokenValiditySeconds =  ConstParam.TOKEN_LIVE_SECONDS;
 
     /**
      * 设定客户端的refresh_token的有效时间值(单位:秒),可选, 若不设定值则使用默认的有效时间值(60 * 60 * 24 * 30, 30天).
      */
     @Column(name = "refresh_token_validity_seconds_")
-    private Integer refreshTokenValiditySeconds = 60 * 60 * 24 * 365;
+    private Integer refreshTokenValiditySeconds =  ConstParam.TOKEN_REFRESH_SECONDS;
 
     /**
      * 设置用户是否自动Approval操作, 默认值为 'false', 可选值包括 'true','false', 'read','write'. 

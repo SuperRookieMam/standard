@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.standard.base.componet.dto.ResultDto;
 import com.standard.oauthCommon.dto.UserDetailsDto;
 import com.standard.permission.componet.annotation.CurrentUser;
-import com.standard.permission.entity.OAthUserDetailes;
+import com.standard.permission.componet.init.InitTable;
 import com.standard.permission.entity.OAuthAccessToken;
 import com.standard.permission.service.OAuthAccessTokenService;
 import io.swagger.annotations.ApiOperation;
@@ -21,6 +21,10 @@ import java.util.Date;
 public class LoginController {
     @Autowired
     private OAuthAccessTokenService oAuthAccessTokenService;
+
+    @Autowired
+    InitTable initTable;
+    
     @GetMapping
     @ResponseBody
     @ApiOperation(value="登陆", notes="logIn")
@@ -33,4 +37,12 @@ public class LoginController {
         return ResultDto.success(JSONObject.toJSONString(oAthUserDetailes));
     }
 
+
+    @GetMapping("1")
+    @ResponseBody
+    @ApiOperation(value="初始化数据", notes="insertByEntity")
+    public  String getAccessToken() throws Exception {
+        initTable.init();
+        return "初始化完毕";
+    }
 }

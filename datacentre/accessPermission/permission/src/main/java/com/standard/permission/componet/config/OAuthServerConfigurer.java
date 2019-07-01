@@ -1,7 +1,6 @@
 package com.standard.permission.componet.config;
 
 
-import com.standard.permission.componet.constpackage.ConstParam;
 import com.standard.permission.componet.feature.DefaultTokenServicesCover;
 import com.standard.permission.componet.feature.TokenStoreCover;
 import com.standard.permission.service.*;
@@ -10,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -20,7 +20,6 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.approval.ApprovalStoreUserApprovalHandler;
 import org.springframework.security.oauth2.provider.approval.UserApprovalHandler;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationManager;
 import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
 
 @Configuration
@@ -38,6 +37,8 @@ public class OAuthServerConfigurer extends AuthorizationServerConfigurerAdapter 
     private OAuthAccessTokenService oAuthAccessTokenService;
     @Autowired
     private OAuthRefreshTokenService oAuthRefreshTokenService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
     /**
      *配置授权服务器的安全性，这实际上意味着/oauth/token端点。/oauth/authorize端点也需要是安全的，
      * 但这是一个普通的面向用户的端点，应该与UI的其他部分以相同的方式进行保护，因此这里不讨论。
@@ -59,7 +60,7 @@ public class OAuthServerConfigurer extends AuthorizationServerConfigurerAdapter 
          * client的client_id和client_secret是通过http的header或者url模式传递
          * 当启用这个配置之后，server可以从表单参数中获取相应的client_id和client_secret信息
          * */
-        security.allowFormAuthenticationForClients();
+        security.allowFormAuthenticationForClients().tokenKeyAccess("permitAll()");
         /**
          * 解码器配置
          * */
@@ -77,7 +78,9 @@ public class OAuthServerConfigurer extends AuthorizationServerConfigurerAdapter 
         DefaultTokenServicesCover defaultTokenServicesCover =getTokenService();
         endpoints.tokenServices(defaultTokenServicesCover);
         endpoints.userApprovalHandler(userApprovalHandler());
-        endpoints.authenticationManager(getmanager(defaultTokenServicesCover));
+        //  需要注入这个可以使用pasword 模式
+        // 注意不要注入错了OAuth2AuthenticationManager，这个也可以用code模式但是不能用简码模式
+        endpoints.authenticationManager(authenticationManager);
         endpoints.reuseRefreshTokens(true);
         // 如果要使用RefreshToken可用，必须指定UserDetailsService
         endpoints.userDetailsService(oAthUserDetailesService);
@@ -97,17 +100,17 @@ public class OAuthServerConfigurer extends AuthorizationServerConfigurerAdapter 
         tokenServices.setClientDetailsService(oauthClientDetailsService);
         tokenServices.setSupportRefreshToken(true);
         tokenServices.setReuseRefreshToken(true);
-        tokenServices.setAuthenticationManager(getmanager(tokenServices));
+        tokenServices.setAuthenticationManager(authenticationManager);
         return tokenServices;
     }
-    @Bean
+    /*@Bean
     public OAuth2AuthenticationManager getmanager(@Autowired DefaultTokenServicesCover defaultTokenServicesCover){
         OAuth2AuthenticationManager oAuth2AuthenticationManager =new OAuth2AuthenticationManager();
         oAuth2AuthenticationManager.setClientDetailsService(oauthClientDetailsService);
         oAuth2AuthenticationManager.setResourceId(ConstParam.RESOURCE_ID);
         oAuth2AuthenticationManager.setTokenServices(defaultTokenServicesCover);
         return oAuth2AuthenticationManager;
-    }
+    }*/
     @Bean
     public TokenStoreCover getTokenStor(){
         TokenStoreCover tokenStoreCover =new TokenStoreCover();
