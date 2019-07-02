@@ -29,5 +29,5 @@ public class MenuFunctionRole extends BaseEntity {
     private Long roleId;
 
     @Column(name = "resource_id_")
-    private Long resourceId;
+    private String resourceId;
 }
