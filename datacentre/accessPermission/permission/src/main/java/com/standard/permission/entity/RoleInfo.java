@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Setter
 @IsCreate
 @Table(name = "role_info_",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"role_name_"})})
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"role_name_","resource_id_"})})
 public class RoleInfo extends BaseEntity {
     private static final long serialVersionUID = -6133439565976081362L;
     @Id
@@ -26,5 +26,8 @@ public class RoleInfo extends BaseEntity {
 
     @Column(name = "pid_")
     private Long pid;
+
+    @Column(name = "resource_id_")
+    private String resourceId;
 
 }

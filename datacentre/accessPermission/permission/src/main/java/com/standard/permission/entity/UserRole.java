@@ -32,6 +32,7 @@ public class UserRole extends BaseEntity {
     @Column(name = "role_id_")
     private Long roleId;
 
-
+    @Column(name = "resource_id_")
+    private String resourceId;
 
 }
