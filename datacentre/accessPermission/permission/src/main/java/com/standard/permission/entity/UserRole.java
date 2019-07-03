@@ -2,6 +2,7 @@ package com.standard.permission.entity;
 
 import com.standard.base.entity.BaseEntity;
 import com.standard.codecreate.feature.annotation.IsCreate;
+import com.standard.permission.componet.constpackage.ConstParam;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -33,6 +34,6 @@ public class UserRole extends BaseEntity {
     private Long roleId;
 
     @Column(name = "resource_id_")
-    private String resourceId;
+    private String resourceId = ConstParam.RESOURCE_ID;
 
 }

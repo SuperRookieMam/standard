@@ -24,13 +24,13 @@ public class BaseController<T extends BaseEntity,ID extends Serializable> {
         return ResultDto.success(baseService.findById(id));
     }
 
-    @GetMapping(value = "list",params = {"params"})
+    @GetMapping(value = "list")
     @ResponseBody
     @ApiOperation(value="根据参数查询", notes="findByParams")
     public ResultDto findByParams(@RequestParam("dynameicParams") String dynamicParams){
         return ResultDto.success(baseService.findListByParams(ParamUtil.strToDynamicParam(dynamicParams)));
     }
-    @GetMapping(value = "page",params = {"params"})
+    @GetMapping(value = "page")
     @ResponseBody
     @ApiOperation(value="根据参数查询", notes="findPageParams")
     public ResultDto findPageParams(@RequestParam("dynameicParams") String dynamicParams){
@@ -63,7 +63,7 @@ public class BaseController<T extends BaseEntity,ID extends Serializable> {
         baseService.deletById(id);
         return ResultDto.success(1);
     }
-    @DeleteMapping(params = "params")
+    @DeleteMapping(value = "params")
     @ResponseBody
     @ApiOperation(value="根据ID删除", notes="deletByIds")
     public ResultDto deletByParams(@RequestParam("dynameicParams") String dynamicParams){
