@@ -42,9 +42,8 @@ public class BaseServiceImpl<T extends BaseEntity,ID extends Serializable> imple
             Predicate predicate = ParamUtil.analysisDynamicParam(dynamicParam,ele.builder,ele.root);
             if (!ObjectUtils.isEmpty(predicate))
                 ele.query.where(predicate);
-           JSONArray jsonArray = dynamicParam.getSort();
-           ParamUtil.orderby(ele.builder,ele.query,ele.root,jsonArray.toArray(new String[0]));
-           ParamUtil.groupBy(ele.query,ele.root,dynamicParam.getGroupby().toArray(new String[0]));
+           ParamUtil.orderby(ele.builder,ele.query,ele.root, dynamicParam.getSort()==null?null: dynamicParam.getSort().toArray(new String[0]));
+           ParamUtil.groupBy(ele.query,ele.root,dynamicParam.getGroupby()==null?null:dynamicParam.getGroupby().toArray(new String[0]));
             return predicate;
         });
         return  dynamicTypeSelect.getResult();
