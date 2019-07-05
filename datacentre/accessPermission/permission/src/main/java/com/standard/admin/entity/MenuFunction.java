@@ -14,7 +14,7 @@ import javax.persistence.*;
 @IsCreate
 @Table(name = "menu_function_",
               uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"function_number_", "resource_id_"})})
+        @UniqueConstraint(columnNames = {"route_name_", "url_","resource_id_"})})
 public class MenuFunction extends BaseEntity {
     private static final long serialVersionUID = -7318256292767023491L;
 
@@ -35,8 +35,8 @@ public class MenuFunction extends BaseEntity {
     @Column(name = "sort_")
     private Integer sort;
 
-    @Column(name = "function_number_")
-    private Integer functionNumber;
+    @Column(name = "route_name_")
+    private String routeName;
 
     @Column(name = "pid_")
     private Integer pid;
