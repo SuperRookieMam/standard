@@ -1,27 +1,26 @@
 <template>
   <div>
-    <el-form :model="FormData"
-                 :rules="rules"
-                 ref="FormData"
-                 label-width="100px"
-                 size="mini">
+    <el-form :model="formData"
+             :rules="rules"
+             ref="formData"
+             label-width="100px"
+             size="mini">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-         <el-tab-pane label="<lable>" name="<name>">
+        <el-tab-pane label="基础信息" name="base">
           <for>
-           <el-row>
-             <el-col :span="12">
-                <el-form-item label="<lable>" prop="<property>">
-                   <el-input v-model="formData.<property>"/>
-                 </el-form-item>
-                </el-col>
-           </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="<lable>" prop="<property>">
+                <el-input v-model="formData.<property>"/>
+              </el-form-item>
+            </el-col>
+          </el-row>
           </for>
-         </el-tab-pane>
-      </el-tabs>
-      <el-row>
-         <el-col :span="12">
+        </el-tab-pane>
+        <el-row>
+          <el-col :span="12">
             <el-form-item>
-              <el-button type="primary" @click="submitForm('formData')">
+              <el-button type="primary" @click="submitForm('formData',id,controllerMapping)">
                 保存
               </el-button>
               <el-button @click="resetForm('formData')">
@@ -30,26 +29,22 @@
             </el-form-item>
           </el-col>
         </el-row>
+      </el-tabs>
     </el-form>
   </div>
 </template>
 <script>
   import { Component, Prop, Mixins } from 'vue-property-decorator'
-  import TableBase from '../../../plugins/TableBase'
-  import TestTable from './TestTalble'
+  import TableBase from '../../../../plugins/TableBase'
 
-  @Component({
-    components: {
-      TestTable
-    }
-  })
-  export default class TestForm extends Mixins(TableBase) {
+  @Component
+  export default class <name> extends Mixins(TableBase) {
     @Prop({ default: () => 'new' })
     id
     activeName = 'base'
-    controllerMapping = 'menuFunction'
+   controllerMapping = 'data/<namelow>'
     rules = {
-          name: [
+         name: [
             {required: true, message: '请输入活动名称', trigger: 'blur'},
             {min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur'}
           ]

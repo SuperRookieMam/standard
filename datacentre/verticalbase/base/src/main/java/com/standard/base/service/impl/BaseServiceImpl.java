@@ -54,15 +54,10 @@ public class BaseServiceImpl<T extends BaseEntity,ID extends Serializable> imple
         DynamicPageTypeSelect<T> DynamicPageTypeSelect = baseRepository.readPageType(dynamicParam.getPageNum(),dynamicParam.getPageSize());
         DynamicPageTypeSelect.dynamicBuild(ele ->{
             Predicate predicate = ParamUtil.analysisDynamicParam(dynamicParam,ele.builder,ele.root);
-            Predicate predicateCount = ParamUtil.analysisDynamicParam(dynamicParam,ele.builder,ele.countRoot);
             if (!ObjectUtils.isEmpty(predicate))
-                ele.query.where(predicate);
-            if (!ObjectUtils.isEmpty(predicateCount))
-                ele.countQuery.where(predicateCount);
-            JSONArray jsonArray = dynamicParam.getSort();
-            ParamUtil.orderby(ele.builder,ele.query,ele.root,jsonArray.toArray(new String[0]));
-            ParamUtil.groupBy(ele.query,ele.root,dynamicParam.getGroupby().toArray(new String[0]));
-            ParamUtil.groupBy(ele.countQuery,ele.countRoot,dynamicParam.getGroupby().toArray(new String[0]));
+                    ele.query.where(predicate);
+            ParamUtil.orderby(ele.builder,ele.query,ele.root, dynamicParam.getSort()==null?null: dynamicParam.getSort().toArray(new String[0]));
+            ParamUtil.groupBy(ele.query,ele.root,dynamicParam.getGroupby()==null?null:dynamicParam.getGroupby().toArray(new String[0]));
             return predicate;
         });
         return  DynamicPageTypeSelect.getResult();

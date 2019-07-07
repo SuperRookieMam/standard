@@ -1,12 +1,12 @@
 <template>
-   <div>
-     <el-form ref="serchObj"
-              class="demo-form-inline"
-              size="mini"
-              label-width="80px">
+  <div>
+    <el-form ref="serchObj"
+             class="demo-form-inline"
+             size="mini"
+             label-width="80px">
          <el-row>
          <for>
-            <el-col :span="4">
+            <el-col :span="6">
                <el-form-item label="<lable>">
                  <el-input v-model="serchObj['<property>']" placeholder="请输入"/>
                </el-form-item>
@@ -20,7 +20,7 @@
                           </el-button>
               <el-button type="primary"
                          size="mini"
-                         @click="add('testForm')">
+                         @click="add(routeName)">
                             新增
                           </el-button>
             </el-col>
@@ -34,59 +34,72 @@
                  prop="<property>"/>
         </for>
          <el-table-column label="操作" :min-width="60">
-                 <template slot-scope="scope">
-                   <el-button type="text" size="mini" @click="edit('testForm',scope.row)">编辑</el-button>
-                   <el-button type="text" size="mini" @click="deleteRow(controllerMapping,scope.row)">编辑</el-button>
-                 </template>
+            <template slot-scope="scope">
+               <el-button type="text" size="mini" @click="edit(routeName,scope.row)">编辑</el-button>
+               <el-button type="text" size="mini" @click="deleteRow(controllerMapping,scope.row)">编辑</el-button>
+            </template>
          </el-table-column>
       </el-table>
       <el-pagination
-               @size-change="handleSizeChange"
-               @current-change="handleCurrentChange"
-               :current-page="params.pageNum"
-               :page-sizes="pageSizes"
-               :page-size="params.pageSize"
-               layout="total, sizes, prev, pager, next, jumper"
-               :total="totalPage"/>
+         @size-change="handleSizeChange"
+         @current-change="handleCurrentChange"
+         :current-page="params.pageNum"
+         :page-sizes="pageSizes"
+         :page-size="params.pageSize"
+         layout="total, sizes, prev, pager, next, jumper"
+         :total="totalCount"/>
    </div>
 </template>
 <script>
    import { Component, Mixins } from 'vue-property-decorator'
-   import TableBase from '../../../plugins/TableBase'
+   import TableBase from '../../../../plugins/TableBase'
 
   @Component
-  export default class TestTalbles extends Mixins(TableBase)  {
-
+  export default class <name>s extends Mixins(TableBase)  {
     serchObj = {}
-
     params = {
         pageSize: 50,
         pageNum: 1
     }
-    pageSizes = [10, 20, 40, 80]
+    pageSizes = [10, 20, 50, 100]
 
     tableData = []
 
-    controllerMapping = ''
+    routeName = '<namelow>'
+
+    controllerMapping = 'data/<namelow>'
 
     handleSizeChange (val) {
-     this.params.  = val
+     this.params.pageSize = val
       this.filterByserchObj()
     }
     handleCurrentChange (val) {
       this.params.pageNum = val
       this.filterByserchObj()
     }
+
     filterByserchObj () {
-          this.search('', this.serchObj, this.params, '').then(ele => {
-            if (ele.code === 0) {
-              this.tableData = ele.data.list
-              this.totalPage = ele.data.total
-            }
-          })
+      let basicsParams = []
+      for (var key in this.serchObj) {
+        if (this.serchObj[key] !== '') {
+          basicsParams.push({key: key, type: 'eq', value: this.serchObj[key]})
         }
-    created () {
-      this.this.filterByserchObj()
+      }
+      this.params.basicsParams = basicsParams
+      this.select(`${this.controllerMapping}/page`, this.params, true).then(data => {
+          this.tableData = data.list
+          this.params.pageSize = data.pageSize
+          this.params.pageNum = data.pageNum
+          this.totalCount = data.total
+      })
     }
- }
+    deleteRow (url, params) {
+      this.Del({url: `${url}/${params.id}`}).then(data => {
+        this.filterByserchObj()
+      })
+    }
+    created () {
+      this.filterByserchObj()
+    }
+  }
 </script>

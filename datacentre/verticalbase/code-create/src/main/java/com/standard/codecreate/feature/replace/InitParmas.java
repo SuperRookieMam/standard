@@ -102,7 +102,6 @@ public class InitParmas {
                 }
                 list1.add(forStrs);
                 mapStr.put("forStr","");
-                map.put("lineNum",-1);
             }else {
                 if (!newLine.contains("<abandon>")){
                     if (newLine.contains("<lable>")){
@@ -117,6 +116,10 @@ public class InitParmas {
                         String tabLable =clazz.getSimpleName();
                         newLine =newLine.replaceAll("<name>",tabLable);
                     }
+                    if (newLine.contains("<namelow>")){
+                        String str =clazz.getSimpleName().substring(0,1).toLowerCase()+clazz.getSimpleName().substring(1);
+                        newLine =newLine.replaceAll("<namelow>",str);
+                    }
                     list1.add(newLine);
                 }
             }
@@ -128,7 +131,7 @@ public class InitParmas {
 
     private String getDescriptionMsg(Description description,String type,Field field){
         if (description==null){
-            return  "";
+            return field.getName();
         }
         if (type.equals("lable")){
            String lable= description.label();
@@ -140,7 +143,7 @@ public class InitParmas {
             String prop= description.prop();
             if ("".equals(prop)){
                 return field.getName();
-            }
+        }
             return prop;
         }else if (type.equals("searchType")){
             String searchType= description.searchType();
