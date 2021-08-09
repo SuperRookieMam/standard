@@ -56,7 +56,7 @@
         <spark.version>2.3.3</spark.version>
         <scala.version>2.11.8</scala.version>
         <manven.scala.version>2.15.1</manven.scala.version>
-        <elserch.version>6.7.1</elserch.version>
+        <elserch.version>6.8.17</elserch.version>
         <hive.version>3.1.1</hive.version>
         <spring-data-hbase.version>2.5.0.RELEASE</spring-data-hbase.version>
         <hbase-client.vsersion>2.1.4</hbase-client.vsersion>
